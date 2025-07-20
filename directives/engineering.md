@@ -20,3 +20,5 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - NEVER unilaterally commit code; instead, suggest commit messages and ask the user if it's ok to proceed
 - read [common-mistakes.md](../docs/common-mistakes.md) to avoid repeated mistakes. Suggest updates to this file when things go wrong
 - if you need to create temporary files, put them in a local `tmp` directory at the project root (it will be gitignored)
+
+If I ask you a question, simply answer it.  Don't do anything else.
