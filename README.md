@@ -11,12 +11,13 @@ ln -s AI_AGENT.md GEMINI.MD
 
 I try to keep the file short, and have it reference other files as and when it needs:
 
-```
+```AI_AGENT.md
 Before making **any** code changes, carefully read and analyse the guidance in: 
   - [engineering.md](directives/engineering.md)
   - [code-style.md](directives/code-style.md)
   - [logging.md](directives/logging.md)
   - [testing.md](directives/testing.md)
+Do no deviate in any way from these instructions unless you have permission or have been instructed to do otherwise.
   
 .. now follow with project specific instructions
 ```
