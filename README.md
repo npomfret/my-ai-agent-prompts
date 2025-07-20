@@ -26,20 +26,10 @@ Before making **ANY** code changes, you MUST:
 - [ ] Read [testing.md](directives/testing.md) completely
 - [ ] State: "I have read all directive files and understand I cannot make code changes until instructed."
 
-## WARNING: Code changes made without reading these files will be rejected
-
-Violations include:
-- Making any code changes before reading ALL directives
-- Starting implementation before receiving explicit permission
-- Skipping any items in the checklist above
-- Deviating from these instructions without explicit permission
-
 ## Required Confirmation
 
 After reading all directives, you MUST explicitly state:
 "I have read all directive files and understand I cannot make code changes until instructed."
-
-Do NOT proceed with any code changes until you receive explicit permission to do so.
   
 .. now follow with project specific instructions
 ```

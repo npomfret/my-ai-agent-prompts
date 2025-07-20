@@ -1,5 +1,7 @@
 # Changes
 
+read @AI_AGENT.md
+
 Analyse the current change list from a fresh perspective, and critique it.
 
 Check for untracked new files:

@@ -1,5 +1,7 @@
 # Code Analysis & Improvement Guide
 
+read @AI_AGENT.md
+
 Analyze the entire project (use `git ls-files` to filter out noise) and identify all areas for improvement. Be creative and VERY thorough. Consider multiple approaches to solve each problem you encounter.
 
 ## What to Look For

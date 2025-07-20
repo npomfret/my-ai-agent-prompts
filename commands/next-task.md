@@ -1,5 +1,7 @@
 # Next task
 
+read @AI_AGENT.md
+
 - Make sure there are no local changes, if there are, warn the user and do nothing else
 - Scan the files in `docs/tasks` and pick an _easy_ task. Avoid tasks that are already in progress
 - Prioritise bugs, cleanup and refactoring over new features: let's not build on shakey foundations
