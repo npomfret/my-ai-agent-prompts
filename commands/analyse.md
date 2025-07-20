@@ -25,6 +25,8 @@ In general, less is more.  What can we reduce in size or ideally remove and dele
 - **Memory**: Object creation in loops, missing memoization, unreleased references
 - **Async**: Synchronous operations that should be async, blocking calls
 
+Don't complicate the code in the name of performance if the performance gain is _minimal_.
+
 ### 4. Maintainability
 - **Documentation**: Missing/outdated comments, unclear business logic, missing type annotations
 - **Configuration**: Hardcoded values, environment-specific code mixed with logic
