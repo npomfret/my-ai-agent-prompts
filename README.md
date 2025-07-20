@@ -25,7 +25,10 @@ Also use symlinks for these files in order to add them to any project (and gitig
 
 ```shell
 ln -s ../my-ai-agent-prompts/directives .
-ln -s ../my-ai-agent-prompts/commands/analyse.md ../my-ai-agent-prompts/commands/changes.md ../my-ai-agent-prompts/commands/next-task.md  .claude/commands
+ln -sf ../../../my-ai-agent-prompts/commands/analyse.md .claude/commands/
+ln -sf ../../../my-ai-agent-prompts/commands/changes.md .claude/commands/
+ln -sf ../../../my-ai-agent-prompts/commands/next-task.md .claude/commands/
+
 # make sure to add these to your .gitignore
 ```
 
