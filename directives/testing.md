@@ -4,6 +4,7 @@
 
 - Run individual tests as and when you make changes
 - Run the full test suite after your changes are clean, complete and ready to commit
+- Never "skip", comment out, or in any way subvert the tests in order to get a working build.
 
 ## Guidelines for Writing Tests
 
