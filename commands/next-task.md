@@ -3,7 +3,7 @@
 read @AI_AGENT.md
 
 - Make sure there are no local changes, if there are, warn the user and do nothing else
-- Scan the files in `docs/tasks` and pick one of the _easier_ tasks. Avoid tasks that are already in progress
+- Pick the easiest task from docs/tasks (or any subdirectory) that isn't already in progress. Prefer bugs/refactoring if any exist, otherwise choose the simplest feature
 - Prioritise bugs, cleanup and refactoring over new features: let's not build on shakey foundations
 - Carefully analyse the task and the parts of the project that it references
 - Decide weather or not it is a valid and worthwhile suggestion (it may not be), and if the suggestions and ideas in it are accurate, helpful and with enough detail (they may not be)
