@@ -7,11 +7,11 @@ Analyse the current change list from a fresh perspective, and critique it.
 Check for untracked new files:
  - Delete them if they are not need
  - Add them to git if they are needed
- - Or in exception circumstance, make sure they are gitignored
+ - Or in exceptionally rare circumstance, make sure they add to `.gitignore`
 
 Check the change set for superfluous code or extraneous changes.
 
-Don't be pedantic, if it's mostly ok just say so.  Focus on important things like:
+Don't be pedantic, if it's mostly ok just say so.  Focus on the important things:
 
 * obvious bugs
 * security blunders
