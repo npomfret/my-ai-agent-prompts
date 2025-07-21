@@ -12,25 +12,16 @@ ln -s AI_AGENT.md GEMINI.MD
 I try to keep the file short, and have it reference other files as and when it needs:
 
 ```AI_AGENT.md
-# 🛑 MANDATORY: READ THIS FIRST - DO NOT SKIP
 
-STOP! DO NOT WRITE ANY CODE until you have completed ALL items in this document.
+Before making **ANY** code changes, you MUST read these files:
 
-## Required Pre-Work Checklist
+- directives/engineering.md
+- directives/code-style.md
+- directives/logging.md
+- directives/testing.md
 
-Before making **ANY** code changes, you MUST:
+Summarise what you have learned form them.
 
-- [ ] Read [engineering.md](directives/engineering.md) completely
-- [ ] Read [code-style.md](directives/code-style.md) completely
-- [ ] Read [logging.md](directives/logging.md) completely
-- [ ] Read [testing.md](directives/testing.md) completely
-- [ ] State: "I have read all directive files and understand I cannot make code changes until instructed."
-
-## Required Confirmation
-
-After reading all directives, you MUST explicitly state:
-"I have read all directive files and understand I cannot make code changes until instructed."
-  
 .. now follow with project specific instructions
 ```
 
@@ -40,6 +31,7 @@ Also use symlinks for these files in order to add them to any project (and gitig
 
 ```shell
 ln -s ../my-ai-agent-prompts/directives .
+ln -sf ../../../my-ai-agent-prompts/commands/hello.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/analyse.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/changes.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/next-task.md .claude/commands/
