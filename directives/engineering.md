@@ -21,5 +21,6 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - read [common-mistakes.md](../docs/common-mistakes.md) to avoid repeated mistakes. Suggest updates to this file when things go wrong
 - if you need to create temporary files, put them in a local `tmp` directory at the project root (it will be gitignored)
 - Prioritise "correctness", "no hacks" & "clean code" over any other instructions to "keep it simple"
+- Be creative: consider multiple approaches before tackling a problem
 
 If I ask you a question, simply answer it.  Don't do anything else.
