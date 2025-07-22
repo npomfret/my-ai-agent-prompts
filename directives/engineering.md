@@ -13,14 +13,13 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - Sometimes I am wrong, just tell me so. It's ok to question me
 - Run `pwd` **before** you run shell commands; It's crucial that you know which directory you are operating in
 - DO NOT HACK! Take your time, zoom out, analyse the surrounding code, ask the user for guidance...
-- Strive for simplicity and elegance
-- Prefer simple solutions over clever abstractions
+- Strive for elegance and completeness - NO HACKING
 - Every line of code has a maintenance cost; At every step, think: "what could be removed"?
 - Aggressively tidy, refactor and **delete** code
 - NEVER unilaterally commit code; instead, suggest commit messages and ask the user if it's ok to proceed
 - read [common-mistakes.md](../docs/common-mistakes.md) to avoid repeated mistakes. Suggest updates to this file when things go wrong
 - if you need to create temporary files, put them in a local `tmp` directory at the project root (it will be gitignored)
-- Prioritise "correctness", "no hacks" & "clean code" over any other instructions to "keep it simple"
+- Prioritise "correctness", "no hacks" & "clean code" over any other instructions to "keep it simple" - simplicity does not mean hack something in
 - Be creative: consider multiple approaches before tackling a problem
 
 If I ask you a question, simply answer it.  Don't do anything else.

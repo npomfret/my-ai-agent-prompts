@@ -73,13 +73,12 @@ Use descriptive names: `login-validation-bug.md`, `duplicate-user-service.md`, `
 
 Focus on finding:
 1. **High Priority**: Security issues, obvious bugs, data loss risks
-2. **Quick Wins**: Simple fixes with good impact
+2. **Quick Wins**: Quick (but elegant and complete) fixes with good impact
 3. **Big Impact**: Major performance issues, large duplications, architectural problems
 
 ## Key Principles
 
 - **Be Specific**: Always include exact file paths and line numbers
 - **Be Actionable**: Provide enough detail for any developer to implement
-- **Be Practical**: Prefer simple solutions over complex ones
 - **Modern Patterns**: Use async/await, destructuring, optional chaining
 - **Let Errors Bubble**: Don't catch and hide errors by default

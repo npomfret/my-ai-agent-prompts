@@ -32,7 +32,7 @@ Unless instructed to do otherwise, follow these principles:
 - Use build it libs and api calls over external libs (e.g. use the NodeJS `request` functions over an http library)
 
 ## Architectural Patterns
-- **Prefer simple solutions** over clever abstractions
+- **Prefer elegant code** over clever abstractions
 - **Avoid silent fallbacks**; let obvious errors surface
 - For web dev: do **not** minify or obfuscate, but do use gzip headers and gzip content (including with websockets)
 
