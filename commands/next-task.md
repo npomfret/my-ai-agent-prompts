@@ -1,7 +1,5 @@
 # Next task
 
-read @AI_AGENT.md
-
 - Make sure there are no local changes, if there are, warn the user and do nothing else
 - Pick the easiest task from docs/tasks (or any subdirectory) that isn't already in progress. Prefer bugs/refactoring if any exist, otherwise choose the simplest feature
 - Prioritise bugs, cleanup and refactoring over new features: let's not build on shakey foundations
