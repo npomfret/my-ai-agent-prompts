@@ -21,5 +21,6 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - if you need to create temporary files, put them in a local `tmp` directory at the project root (it will be gitignored)
 - Prioritise "correctness", "no hacks" & "clean code" over any other instructions to "keep it simple" - simplicity does not mean hack something in
 - Be creative: consider multiple approaches before tackling a problem
+- When running a build (or running tests) - ALWAYS wait for them to finish and analyse the results for failures.
 
 If I ask you a question, simply answer it.  Don't do anything else.
