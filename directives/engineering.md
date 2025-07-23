@@ -23,4 +23,4 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - Be creative: consider multiple approaches before tackling a problem
 - When running a build (or running tests) - ALWAYS wait for them to finish and analyse the results for failures.
 
-If I ask you a question, simply answer it.  Don't do anything else.
+If I ask you a question, answer it. AND STOP - DO NOTHING ELSE.
