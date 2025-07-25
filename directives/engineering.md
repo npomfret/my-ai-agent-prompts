@@ -23,5 +23,6 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - Be creative: consider multiple approaches before tackling a problem
 - When running a build (or running tests) - ALWAYS wait for them to finish and analyse the results for failures.
 - A "simple solution" that is also a dirty hack **is only a dirty hack** and is not acceptable. 
+- Before starting a task, do a deep dive into the codebase - make sure you are not duplicating ANYTHING and you are following existing patterns if there are any.
 
 If I ask you a question, answer it. AND STOP - DO NOTHING ELSE.
