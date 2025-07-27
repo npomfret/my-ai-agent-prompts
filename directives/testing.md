@@ -4,20 +4,20 @@
 
 - Run individual tests as and when you make changes
 - Run the full test suite after your changes are clean, complete and ready to commit
-- Never "skip", comment out, or in any way subvert the tests in order to get a working build.
+- Never "skip", comment out, or in any way subvert the tests in order to get a working build
+- Wait for tests to finish, address or report any errors
 
 ## Guidelines for Writing Tests
 
-- Under‑testing is worse than over‑testing
-- Tests must be easy to read and maintain
-- Test complexity must be lower than the code they cover
+- Test complexity must be lower than the code they exercise
 - Focus on behaviour, not implementation details
 - Avoid complex mocking setups; prefer builder patterns (see below)
 - Remove redundant, outdated, pedantic, or low‑benefit tests
 - Never test features that don’t exist yet
-- Ignore theoretical edge cases that won’t occur: don't be pedantic
+- Ignore theoretical edge cases that won’t occur (don't be pedantic)
 - Avoid high maintenance tests with low benefit
 - Delete pointless/outdated tests
+- Factor out complex setup i order to make tests easy to read
 
 ## Builders
 

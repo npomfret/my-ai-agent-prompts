@@ -1,1 +1,1 @@
-Read AI_AGENT.md at the root of the project and briefly confirm your understanding.
+Prove to me that you understand your instructions.
