@@ -7,7 +7,7 @@ Check for untracked new files:
  - Add them to git if they are needed
  - Or in exceptionally rare circumstance, make sure they add to `.gitignore`
 
-Check the change set for superfluous code or extraneous changes.
+Reject the change set if there is ANY superfluous code, changes or features.
 
 Don't be pedantic, if it's mostly ok just say so.  Focus on the important things:
 
