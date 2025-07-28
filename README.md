@@ -42,3 +42,10 @@ ln -sf ../../../my-ai-agent-prompts/commands/next-task.md .claude/commands/
 ```
 
 As a general approach, I create a `docs/tasks` directory in the root of every project.  Form here I add subdirectors, or not, as needed, and write all my bug reports, feature planning, refactorings as `.md` files. 
+
+## Update cli tools...
+
+```shell
+npm update -g @anthropic-ai/claude-code
+npm install -g @google/gemini-cli
+```
