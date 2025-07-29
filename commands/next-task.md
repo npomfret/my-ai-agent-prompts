@@ -8,9 +8,7 @@ Use the task file provided in the arguments: {{$ARGUMENTS}}
 - Prioritise bugs, cleanup and refactoring over new features: let's not build on shakey foundations
 {{end}}
 
-Decide weather or not it is a valid and worthwhile suggestion (it may not be), and if the suggestions and ideas in it are accurate, helpful and with enough detail (they may not be)
-
-If you decide that the task is bogus in some way, or already completed, then delete it, report back, **and do nothing else**.
+Decide weather or not it is a valid and worthwhile suggestion (it may not be), and if the suggestions and ideas in it are accurate, helpful and with enough detail (they may not be).  If you decide that the task is bogus in some way, or already completed, then delete it, report back, **and do nothing else**.
 
 ## Stop!
 
