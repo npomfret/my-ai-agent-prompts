@@ -5,8 +5,8 @@ For Claude Code and Gemini Cli.
 For common behaviour for multiple agents, create an `AI_AGENT.md` file in the root of my project and symlink it to `CLAUDE.md` and `GEMINI.md`.
 
 ```shell
-ln -s AI_AGENT.md CLAUDE.MD
-ln -s AI_AGENT.md GEMINI.MD
+ln -s AI_AGENT.md CLAUDE.md
+ln -s AI_AGENT.md GEMINI.md
 ```
 
 I try to keep the file short, bespoke, but have it reference common _directive_ files as and when it needs:
