@@ -37,6 +37,7 @@ ln -sf ../../../my-ai-agent-prompts/commands/hello.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/analyse.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/changes.md .claude/commands/
 ln -sf ../../../my-ai-agent-prompts/commands/next-task.md .claude/commands/
+ln -sf ../../../my-ai-agent-prompts/commands/fix.md .claude/commands/
 
 # make sure to add these to your .gitignore
 ```
