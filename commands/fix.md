@@ -12,3 +12,9 @@ If you could change or improve just one thing to make this project...
 - _better_ in any way
 
 - ... what would it be?
+
+IMPORTANT: Before suggesting a fix, use the architect-advisor agent to:
+- Trace the data flow
+- Understand upstream/downstream impacts
+- Identify the ROOT cause, not just symptoms
+- Recommend WHERE to make the change for maximum benefit
