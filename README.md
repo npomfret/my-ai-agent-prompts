@@ -1,32 +1,28 @@
 # my-ai-agent-prompts
 
-For Claude Code and Gemini Cli.
+For Claude Code and Gemini Cli (kind of).
 
-For common behaviour for multiple agents, create an `AI_AGENT.md` file in the root of my project and symlink it to `CLAUDE.md` and `GEMINI.md`.
+## Project Setup
 
-```shell
-ln -s AI_AGENT.md CLAUDE.md
-ln -s AI_AGENT.md GEMINI.md
-```
-
-Use the provided `AI_AGENT.template.md` template as a starting point for your project's CLAUDE.md/GEMINI.md files. This template enforces the agent-based workflow that makes directives much harder to ignore.
-
-Note: _This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore._ 
-
-Also use symlinks for these files in order to add them to any project (and gitignore them).
+Use the `setup-project-links.sh` script to automatically configure a new project with AI agent prompts:
 
 ```shell
-ln -s ../my-ai-agent-prompts/directives .
+# From within your target project
+../my-ai-agent-prompts/setup-project-links.sh
 
-mkdir -p .claude/commands
-ln -sf ../../../my-ai-agent-prompts/commands/hello.md .claude/commands/
-ln -sf ../../../my-ai-agent-prompts/commands/analyse.md .claude/commands/
-ln -sf ../../../my-ai-agent-prompts/commands/changes.md .claude/commands/
-ln -sf ../../../my-ai-agent-prompts/commands/next-task.md .claude/commands/
-ln -sf ../../../my-ai-agent-prompts/commands/fix.md .claude/commands/
-
-# make sure to add these to your .gitignore
+# Or specify a target directory
+./setup-project-links.sh /path/to/target/project
 ```
+
+The script automatically:
+- Creates `AI_AGENT.md` if it doesn't exist (from template or basic version)
+- Symlinks `CLAUDE.md` and `GEMINI.md` to `AI_AGENT.md` for shared configuration
+- Syncs all command files to `.claude/commands/`
+- Syncs all agent files to `.claude/agents/`
+- Updates `.gitignore` with all symlinked paths
+- Handles additions/removals - safe to re-run anytime
+
+This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore.
 
 On starting a new claude shell, always run `/hello` first (this includes mandatory workflow initialization).
 
