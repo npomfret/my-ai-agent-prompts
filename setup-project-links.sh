@@ -155,28 +155,81 @@ fi
 
 echo -e "\n${BLUE}5. Updating .gitignore...${NC}"
 
-# Function to add to .gitignore if not already present
-add_to_gitignore() {
-    local pattern="$1"
-    if [ -f .gitignore ]; then
-        if ! grep -qF "$pattern" .gitignore; then
-            echo "$pattern" >> .gitignore
-            echo -e "${GREEN}  ✓ Added '$pattern' to .gitignore${NC}"
-        else
-            echo -e "${BLUE}  '$pattern' already in .gitignore${NC}"
-        fi
-    else
-        echo "$pattern" > .gitignore
-        echo -e "${GREEN}  ✓ Created .gitignore with '$pattern'${NC}"
+# Function to manage AI agents section in .gitignore
+update_gitignore_ai_section() {
+    local temp_file=".gitignore.tmp"
+    local ai_section_header="# AI agents stuff"
+    local patterns_to_add=()
+    
+    # Collect all patterns we need
+    patterns_to_add+=("CLAUDE.md")
+    patterns_to_add+=("GEMINI.md")
+    patterns_to_add+=("directives")
+    
+    # Add individual command symlinks
+    if [ -d ".claude/commands" ]; then
+        for link in .claude/commands/*.md; do
+            if [ -L "$link" ]; then
+                patterns_to_add+=(".claude/commands/$(basename "$link")")
+            fi
+        done
     fi
+    
+    # Add individual agent symlinks
+    if [ -d ".claude/agents" ]; then
+        for link in .claude/agents/*.md; do
+            if [ -L "$link" ]; then
+                patterns_to_add+=(".claude/agents/$(basename "$link")")
+            fi
+        done
+    fi
+    
+    # Create or update .gitignore
+    if [ -f .gitignore ]; then
+        # Remove existing AI agents section and any stray AI-related entries
+        awk -v header="$ai_section_header" '
+            BEGIN { in_ai_section = 0; }
+            $0 == header { in_ai_section = 1; next; }
+            in_ai_section && /^[[:space:]]*$/ { in_ai_section = 0; }
+            in_ai_section { next; }
+            /^CLAUDE\.md$/ { next; }
+            /^GEMINI\.md$/ { next; }
+            /^directives$/ { next; }
+            /^\.claude\/commands\// { next; }
+            /^\.claude\/agents\// { next; }
+            { print }
+        ' .gitignore > "$temp_file"
+        
+        # Ensure file ends with newline
+        if [ -s "$temp_file" ] && [ -n "$(tail -c 1 "$temp_file")" ]; then
+            echo "" >> "$temp_file"
+        fi
+        
+        # Add AI agents section at the bottom
+        echo "" >> "$temp_file"
+        echo "$ai_section_header" >> "$temp_file"
+        for pattern in "${patterns_to_add[@]}"; do
+            echo "$pattern" >> "$temp_file"
+        done
+        
+        # Replace original file
+        mv "$temp_file" .gitignore
+        echo -e "${GREEN}  ✓ Updated .gitignore with AI agents section at bottom${NC}"
+    else
+        # Create new .gitignore with AI agents section
+        echo "$ai_section_header" > .gitignore
+        for pattern in "${patterns_to_add[@]}"; do
+            echo "$pattern" >> .gitignore
+        done
+        echo -e "${GREEN}  ✓ Created .gitignore with AI agents section${NC}"
+    fi
+    
+    # Show what was added
+    echo -e "${BLUE}  Added ${#patterns_to_add[@]} patterns to .gitignore${NC}"
 }
 
-# Add symlinks to .gitignore
-add_to_gitignore "CLAUDE.md"
-add_to_gitignore "GEMINI.md"
-add_to_gitignore ".claude/commands"
-add_to_gitignore ".claude/agents"
-add_to_gitignore "directives"
+# Update .gitignore with all AI-related patterns
+update_gitignore_ai_section
 
 echo -e "\n${GREEN}✅ Setup complete!${NC}"
 echo -e "\n${BLUE}Summary:${NC}"
