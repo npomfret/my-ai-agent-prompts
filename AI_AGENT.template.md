@@ -1,8 +1,5 @@
 # AGENT-BASED WORKFLOW ENFORCEMENT
 
-## SESSION START
-Always run `/hello` first - it includes mandatory workflow initialization.
-
 ## WORKFLOW ORCHESTRATION
 Throughout this session, regularly invoke:
 ```
