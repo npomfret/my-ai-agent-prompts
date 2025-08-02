@@ -28,5 +28,6 @@ Unless explicitly instructed otherwise, follow these principles like your life d
 - A "simple solution" that is also a dirty hack **is only a dirty hack** and is not acceptable. 
 - Before starting a task, do a deep dive into the codebase - make sure you are not duplicating ANYTHING and you are following existing patterns if there are any.
 - Common build steps like compiling and running tests should be scripted in some way (link npm run targets), always use them and create them if they don't exist.
+- Don't believe comments! Read the code. In fact, most comments are useless and can be deleted.
 
 If I ask you a question, answer it. AND STOP - DO NOTHING ELSE.
