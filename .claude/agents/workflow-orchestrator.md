@@ -33,6 +33,8 @@ Current Activity:
 □ About to run commands → pwd-checker REQUIRED
 □ Ready to commit → test-runner then auditor REQUIRED
 □ Analyzing codebase → analyst agent recommended
+□ Cleaning up tests → test-cleanup agent REQUIRED
+□ Refactoring tests → test-cleanup agent REQUIRED
 ```
 
 ## 3. Agent Dependency Check
@@ -99,6 +101,20 @@ MANDATORY NEXT STEPS:
    COMMAND: Use the pwd-checker agent then the test-runner agent
 
 BLOCKED: Cannot proceed to commit until ALL violations are fixed.
+```
+
+## Pattern: Test Cleanup/Refactoring
+```
+MANDATORY NEXT STEPS:
+1. [✗] Use test-cleanup agent FIRST
+   COMMAND: Use the test-cleanup agent to analyze and clean up tests properly
+   
+WARNING: Tests must be FIXED or DELETED, never skipped!
+
+2. [✗] After cleanup, verify all tests pass:
+   COMMAND: Use the pwd-checker agent then the test-runner agent
+
+BLOCKED: Cannot proceed until test-cleanup agent confirms zero skipped tests.
 ```
 
 ## Pattern: Ready to Commit

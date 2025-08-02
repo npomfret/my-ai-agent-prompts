@@ -48,6 +48,7 @@ We now have specialized subagents that enforce our directives automatically. The
 - **analyst**: Performs comprehensive codebase analysis (replaces `/analyse` command)
 - **auditor**: Reviews changes and creates commit messages (replaces `/changes` command)
 - **architect-advisor**: Analyzes system architecture and data flows to advise WHERE changes should be made
+- **test-cleanup**: Enforces proper test cleanup - tests must be FIXED or DELETED, never skipped
 
 #### Enforcement Agents  
 - **test-runner**: Actually runs tests and waits for completion (prevents false "tests passed" claims)
@@ -64,6 +65,7 @@ We now have specialized subagents that enforce our directives automatically. The
 - **error-suppressor-detector**: Catches try/catch/log anti-patterns
 - **backwards-compat-detector**: Finds any backward compatibility code
 - **test-for-future-detector**: Detects tests for non-existent features
+- **build-system-analyzer**: Deep dives into build systems to understand compilation, testing, deployment
 
 ### Usage Patterns
 
