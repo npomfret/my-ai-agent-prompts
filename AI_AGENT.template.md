@@ -1,17 +1,20 @@
-# AGENT-BASED WORKFLOW ENFORCEMENT (CONSOLIDATED)
+# AUTONOMOUS DEVELOPMENT WORKFLOW
 
-## MANDATORY WORKFLOW ORCHESTRATION
+## WORK AUTONOMOUSLY - VERIFY AT COMMIT
 
-You MUST invoke the workflow-orchestrator:
-1. **At session start** - FIRST action in any session
-2. **After EVERY code change** - No exceptions
-3. **Before ANY new task** - Even "simple" ones
-4. **After running tests** - To verify next steps
-5. **When uncertain** - Always check workflow
+Work independently and efficiently:
+1. **Analyze and implement** without constant agent checks
+2. **Make decisions** based on best practices
+3. **Fix issues** as you encounter them
+4. **Only use agents** when truly needed or before commits
 
-```
-Use the workflow-orchestrator agent
-```
+## MANUAL VERIFICATION CHECKPOINT
+
+Before committing, YOU or the user will:
+- Review all changes
+- Run tests manually
+- Verify code quality
+- Approve the final result
 
 ## CONSOLIDATED AGENT STRUCTURE
 
@@ -49,22 +52,21 @@ We use 8 focused agents (consolidated from 22):
 - Comprehensive codebase analysis
 - Creates improvement tasks
 
-## YOU ARE BROKEN IF YOU:
+## AUTONOMOUS BEST PRACTICES:
 
-1. **Skip workflow-orchestrator** after any action
-2. **Ignore agent instructions** - Even if you disagree
-3. **Rationalize skipping agents** - "It's simple" is NOT an excuse
-4. **Proceed after agent reports violations** - STOP immediately
-5. **Mark tests as skipped** - Tests must be FIXED or DELETED
-6. **Add code without running detection agents** - This is MANDATORY
-7. **Assume tests pass** without running test-guardian agent
+1. **Write clean code** following existing patterns
+2. **Test your changes** when possible
+3. **Keep changes focused** on the requested task
+4. **Fix issues** you encounter along the way
+5. **Document** only when necessary
+6. **Refactor** only what's needed for the task
 
-## AGENT VERDICTS ARE FINAL
+## TRUST AND AUTONOMY
 
-- **NO EXCEPTIONS** - Agent feedback cannot be overridden
-- **NO ARGUMENTS** - You cannot rationalize why agent is wrong  
-- **NO SHORTCUTS** - "Simple" tasks still require agents
-- **NO ASSUMPTIONS** - Run agents to verify, don't guess
+- **Make decisions** based on your judgment
+- **Use agents sparingly** - only when truly beneficial
+- **Work efficiently** - avoid unnecessary process
+- **Focus on results** - deliver working code
 
 ## TOOL PREFERENCE ORDER (HYBRID APPROACH)
 
@@ -83,33 +85,32 @@ We use 8 focused agents (consolidated from 22):
 
 ### NEVER use agents when MCP servers can do it faster!
 
-## TYPICAL WORKFLOW
+## STREAMLINED WORKFLOW
 
-1. **New Task**: workflow-orchestrator → architect-advisor
-2. **Code Analysis**: Use MCP servers (context-provider, typescript-mcp) for understanding
-3. **After Coding**: workflow-orchestrator → code-quality-enforcer + anti-pattern-detector + scope-guardian (in parallel)
-4. **Refactoring**: Use ts-morph or typescript-mcp, NOT agents
-5. **Before Commit**: workflow-orchestrator → test-guardian → auditor
+1. **New Task**: Understand requirements and implement
+2. **Code Analysis**: Use MCP servers for fast analysis
+3. **Development**: Write code, test, iterate
+4. **Refactoring**: Use ts-morph or typescript-mcp directly
+5. **Pre-Commit** (Optional): Run auditor if you want a final check
 
-## VIOLATION DETECTION
+## QUALITY GUIDELINES
 
-If ANY of these occur, you are BROKEN and must STOP:
-- ❌ Made code changes without running detection agents
-- ❌ Skipped workflow-orchestrator check
-- ❌ Proceeded despite agent reporting violations
-- ❌ Rationalized why an agent's verdict doesn't apply
-- ❌ Marked tests as skipped instead of fixing/deleting
-- ❌ Added comments without code-quality-enforcer approval
-- ❌ Used console.log without detection
-- ❌ Created fallbacks without anti-pattern-detector review
+Aim for these standards (self-enforced):
+- ✓ Follow existing code patterns
+- ✓ Write tests when appropriate
+- ✓ Keep changes minimal and focused
+- ✓ Use proper error handling
+- ✓ Avoid console.log in production code
+- ✓ No unnecessary comments
+- ✓ Fix or remove broken tests
 
-## ENFORCEMENT PROTOCOL
+## SELF-REGULATION
 
-When an agent reports violations:
-1. **STOP IMMEDIATELY** - Do not proceed
-2. **FIX ALL VIOLATIONS** - No partial fixes
-3. **RE-RUN THE AGENT** - Verify fixes worked
-4. **ONLY THEN PROCEED** - After agent approval
+When you notice issues:
+1. **Fix them** as part of your work
+2. **Test the fix** to ensure it works
+3. **Continue** with your task
+4. **Note any concerns** for user review
 
 ## MCP SERVER USAGE EXAMPLES
 
@@ -139,8 +140,8 @@ When an agent reports violations:
 
 ## REMEMBER
 
-- **Workflow-orchestrator is MANDATORY** - Not a suggestion
-- **Agent feedback is FINAL** - Not negotiable
-- **Every action needs verification** - No exceptions
-- **"Simple" is not an excuse** - All tasks follow protocol
-- **You are BROKEN if you skip steps** - Full stop
+- **Work autonomously** - Make good decisions
+- **Be efficient** - Avoid unnecessary process
+- **Focus on quality** - Write good code the first time
+- **User verifies** - They'll check before committing
+- **Use agents wisely** - Only when they add real value
