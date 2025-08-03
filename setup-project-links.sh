@@ -298,7 +298,6 @@ update_gitignore_ai_section() {
         fi
         
         # Add AI agents section at the bottom
-        echo "" >> "$temp_file"
         echo "$ai_section_header" >> "$temp_file"
         for pattern in "${patterns_to_add[@]}"; do
             echo "$pattern" >> "$temp_file"
