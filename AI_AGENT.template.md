@@ -66,11 +66,30 @@ We use 8 focused agents (consolidated from 22):
 - **NO SHORTCUTS** - "Simple" tasks still require agents
 - **NO ASSUMPTIONS** - Run agents to verify, don't guess
 
+## TOOL PREFERENCE ORDER (HYBRID APPROACH)
+
+### ALWAYS use MCP servers when available for:
+- **Refactoring**: Use `ts-morph` or `typescript-mcp` instead of agents
+- **Type checking**: Use `typescript-mcp` for diagnostics instead of manual checking
+- **Code analysis**: Use `context-provider` for initial analysis instead of reading files
+- **Finding references**: Use `typescript-mcp` or `ts-morph` instead of grep/search
+- **Documentation lookup**: Use `context7` for API docs instead of web search
+
+### ONLY use agents for:
+- **Workflow orchestration**: workflow-orchestrator guides the process
+- **Architectural decisions**: architect-advisor before implementation
+- **Quality enforcement**: Detection agents after code changes
+- **Commit validation**: auditor for final review
+
+### NEVER use agents when MCP servers can do it faster!
+
 ## TYPICAL WORKFLOW
 
 1. **New Task**: workflow-orchestrator → architect-advisor
-2. **After Coding**: workflow-orchestrator → code-quality-enforcer + anti-pattern-detector + scope-guardian (in parallel)
-3. **Before Commit**: workflow-orchestrator → test-guardian → auditor
+2. **Code Analysis**: Use MCP servers (context-provider, typescript-mcp) for understanding
+3. **After Coding**: workflow-orchestrator → code-quality-enforcer + anti-pattern-detector + scope-guardian (in parallel)
+4. **Refactoring**: Use ts-morph or typescript-mcp, NOT agents
+5. **Before Commit**: workflow-orchestrator → test-guardian → auditor
 
 ## VIOLATION DETECTION
 
@@ -91,6 +110,29 @@ When an agent reports violations:
 2. **FIX ALL VIOLATIONS** - No partial fixes
 3. **RE-RUN THE AGENT** - Verify fixes worked
 4. **ONLY THEN PROCEED** - After agent approval
+
+## MCP SERVER USAGE EXAMPLES
+
+### When to use each MCP server:
+
+**ts-morph** - Powerful refactoring:
+- Renaming symbols across files: `mcp__ts-morph__rename_symbol_by_tsmorph`
+- Moving functions/classes to different files: `mcp__ts-morph__move_symbol_to_file_by_tsmorph`
+- Renaming/moving files with import updates: `mcp__ts-morph__rename_filesystem_entry_by_tsmorph`
+
+**typescript-mcp** - Language server features:
+- Get type info on hover: `mcp__typescript-mcp__get_hover`
+- Find all references: `mcp__typescript-mcp__find_references`
+- Get diagnostics/errors: `mcp__typescript-mcp__get_diagnostics`
+- Rename symbols: `mcp__typescript-mcp__rename_symbol`
+
+**context-provider** - Fast codebase overview:
+- Get project structure and symbols: `mcp__context-provider__get_code_context`
+- Understand codebase quickly without multiple file reads
+
+**context7** - Documentation lookup:
+- Get library docs: `mcp__context7__get-library-docs`
+- Find API examples: `mcp__context7__resolve-library-id`
 
 ## PROJECT-SPECIFIC INSTRUCTIONS
 [Add your project-specific requirements here]
