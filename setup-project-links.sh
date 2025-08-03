@@ -179,15 +179,15 @@ merge_settings_json() {
         local temp_file=".claude/settings.json.tmp"
         
         # Merge the JSON files, with target taking precedence
-        jq -s '.[0] * .[1] | 
-            .permissions.allow = (
-                (.[0].permissions.allow // []) + (.[1].permissions.allow // []) 
-                | unique | sort
-            ) |
-            .permissions.deny = (
-                (.[0].permissions.deny // []) + (.[1].permissions.deny // [])
-                | unique | sort
-            )' "$source_settings" "$target_settings" > "$temp_file"
+        jq -s '
+            # Get source and target as variables
+            .[0] as $source | .[1] as $target |
+            
+            # Start with target and merge permissions only
+            $target |
+            .permissions.allow = (($source.permissions.allow // []) + ($target.permissions.allow // []) | unique | sort) |
+            .permissions.deny = (($source.permissions.deny // []) + ($target.permissions.deny // []) | unique | sort)
+        ' "$source_settings" "$target_settings" > "$temp_file"
         
         # Replace the target file
         mv "$temp_file" "$target_settings"
@@ -203,7 +203,47 @@ merge_settings_json() {
 # Merge settings.json files
 merge_settings_json
 
-echo -e "\n${BLUE}6. Updating .gitignore...${NC}"
+echo -e "\n${BLUE}6. Setting up .mcp.json...${NC}"
+
+# Create or update .mcp.json file
+setup_mcp_json() {
+    local mcp_file=".mcp.json"
+    
+    if [ ! -f "$mcp_file" ]; then
+        # Create new .mcp.json with default MCP servers
+        cat > "$mcp_file" << 'EOF'
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "typescript-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mizchi/lsmcp", "-p", "typescript"]
+    },
+    "ts-morph": {
+      "command": "npx",
+      "args": ["-y", "@sirosuzume/mcp-tsmorph-refactor"]
+    },
+    "context-provider": {
+      "command": "npx",
+      "args": ["-y", "code-context-provider-mcp"]
+    }
+  }
+}
+EOF
+        echo -e "${GREEN}  ✓ Created .mcp.json with MCP servers${NC}"
+    else
+        echo -e "${BLUE}  .mcp.json already exists${NC}"
+    fi
+}
+
+# Setup MCP servers
+setup_mcp_json
+
+echo -e "\n${BLUE}7. Updating .gitignore...${NC}"
 
 # Function to manage AI agents section in .gitignore
 update_gitignore_ai_section() {
@@ -215,6 +255,7 @@ update_gitignore_ai_section() {
     patterns_to_add+=("CLAUDE.md")
     patterns_to_add+=("GEMINI.md")
     patterns_to_add+=("directives")
+    patterns_to_add+=(".mcp.json")
     
     # Add individual command symlinks
     if [ -d ".claude/commands" ]; then
@@ -245,6 +286,7 @@ update_gitignore_ai_section() {
             /^CLAUDE\.md$/ { next; }
             /^GEMINI\.md$/ { next; }
             /^directives$/ { next; }
+            /^\.mcp\.json$/ { next; }
             /^\.claude\/commands\// { next; }
             /^\.claude\/agents\// { next; }
             { print }
@@ -287,7 +329,8 @@ echo "  - AI_AGENT.md is the source file for both CLAUDE.md and GEMINI.md"
 echo "  - Command symlinks in: .claude/commands/"
 echo "  - Agent symlinks in: .claude/agents/"
 echo "  - Settings merged into: .claude/settings.json"
-echo "  - All symlinks added to .gitignore"
+echo "  - MCP servers configured in: .mcp.json"
+echo "  - All symlinks and .mcp.json added to .gitignore"
 echo -e "\n${YELLOW}Remember to run '/hello' when starting a new Claude session!${NC}"
 
 # List what was set up
