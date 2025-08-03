@@ -6,7 +6,7 @@ Work independently and efficiently:
 1. **Analyze and implement** without constant agent checks
 2. **Make decisions** based on best practices
 3. **Fix issues** as you encounter them
-4. **Only use agents** when truly needed or before commits
+4. **Use agents** when appropriate
 
 ## MANUAL VERIFICATION CHECKPOINT
 
@@ -16,20 +16,23 @@ Before committing, YOU or the user will:
 - Verify code quality
 - Approve the final result
 
-## CONSOLIDATED AGENT STRUCTURE
+## CONSOLIDATED AGENT STRUCTURE (MCP-AWARE)
 
-We use 8 focused agents (consolidated from 22):
+We use 8 focused agents that are aware of MCP servers:
 
 ### 1. workflow-orchestrator
-- Meta-agent that coordinates all others
-- Tells you EXACTLY which agents to use when
+- Efficiency advisor that recommends fastest approach
+- Prioritizes MCP servers > built-in tools > agents
+- Suggests tools based on actual value, not process
 
 ### 2. architect-advisor  
-- Analyzes system architecture before ANY implementation
-- MANDATORY before writing code
+- Analyzes system architecture using MCP servers first
+- Uses context-provider for overview, typescript-mcp for references
+- Optional for simple tasks in autonomous mode
 
 ### 3. code-quality-enforcer
-- Enforces style, syntax, logging, comments, duplication, immutability
+- Leverages typescript-mcp for diagnostics before manual checks
+- Suggests ts-morph for automated fixes
 - Combines 6 previous agents into one comprehensive check
 
 ### 4. anti-pattern-detector
@@ -45,12 +48,14 @@ We use 8 focused agents (consolidated from 22):
 - Includes pwd checking for commands
 
 ### 7. auditor
-- Final review before commits
-- Creates commit messages
+- Advisory role in autonomous mode
+- Uses MCP for quick diagnostics
+- Creates commit messages, flags issues for user review
 
 ### 8. analyst
-- Comprehensive codebase analysis
-- Creates improvement tasks
+- Uses MCP servers for fast initial analysis
+- Creates improvement tasks with automation suggestions
+- Leverages context-provider and typescript-mcp heavily
 
 ## AUTONOMOUS BEST PRACTICES:
 
@@ -69,6 +74,14 @@ We use 8 focused agents (consolidated from 22):
 - **Focus on results** - deliver working code
 
 ## TOOL PREFERENCE ORDER (HYBRID APPROACH)
+
+### MCP SERVER PERMISSIONS
+- **MCP servers require ONE-TIME approval per project** for security
+- After initial approval, they run automatically without prompting
+- This is a security feature, not a bug - MCP servers can access external resources
+- Trust MCP servers for fast, accurate operations
+- They are essential for efficient autonomous workflow
+- To reset approvals: `claude mcp reset-project-choices`
 
 ### ALWAYS use MCP servers when available for:
 - **Refactoring**: Use `ts-morph` or `typescript-mcp` instead of agents
@@ -135,9 +148,6 @@ When you notice issues:
 - Get library docs: `mcp__context7__get-library-docs`
 - Find API examples: `mcp__context7__resolve-library-id`
 
-## PROJECT-SPECIFIC INSTRUCTIONS
-[Add your project-specific requirements here]
-
 ## REMEMBER
 
 - **Work autonomously** - Make good decisions
@@ -145,3 +155,6 @@ When you notice issues:
 - **Focus on quality** - Write good code the first time
 - **User verifies** - They'll check before committing
 - **Use agents wisely** - Only when they add real value
+
+## PROJECT-SPECIFIC INSTRUCTIONS
+[Add your project-specific requirements here]

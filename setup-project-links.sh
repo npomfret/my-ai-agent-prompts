@@ -153,7 +153,57 @@ if [ -d ".claude/agents" ]; then
     done
 fi
 
-echo -e "\n${BLUE}5. Updating .gitignore...${NC}"
+echo -e "\n${BLUE}5. Setting up .claude/settings.json...${NC}"
+
+# Function to merge settings.json
+merge_settings_json() {
+    local source_settings="$SCRIPT_DIR/.claude/settings.json"
+    local target_settings=".claude/settings.json"
+    
+    # Check if source settings exists
+    if [ ! -f "$source_settings" ]; then
+        echo -e "${YELLOW}  No source settings.json found in template${NC}"
+        return
+    fi
+    
+    # If target doesn't exist, just copy it
+    if [ ! -f "$target_settings" ]; then
+        cp "$source_settings" "$target_settings"
+        echo -e "${GREEN}  ✓ Created .claude/settings.json from template${NC}"
+        return
+    fi
+    
+    # Both files exist, merge them using jq if available
+    if command -v jq &> /dev/null; then
+        # Create a temporary file for the merged result
+        local temp_file=".claude/settings.json.tmp"
+        
+        # Merge the JSON files, with target taking precedence
+        jq -s '.[0] * .[1] | 
+            .permissions.allow = (
+                (.[0].permissions.allow // []) + (.[1].permissions.allow // []) 
+                | unique | sort
+            ) |
+            .permissions.deny = (
+                (.[0].permissions.deny // []) + (.[1].permissions.deny // [])
+                | unique | sort
+            )' "$source_settings" "$target_settings" > "$temp_file"
+        
+        # Replace the target file
+        mv "$temp_file" "$target_settings"
+        echo -e "${GREEN}  ✓ Merged settings.json (combined permissions from both files)${NC}"
+    else
+        echo -e "${YELLOW}  Warning: jq not installed. Cannot merge settings.json automatically.${NC}"
+        echo -e "${YELLOW}  Please manually merge settings from:${NC}"
+        echo -e "${YELLOW}    $source_settings${NC}"
+        echo -e "${YELLOW}  Into your project's .claude/settings.json${NC}"
+    fi
+}
+
+# Merge settings.json files
+merge_settings_json
+
+echo -e "\n${BLUE}6. Updating .gitignore...${NC}"
 
 # Function to manage AI agents section in .gitignore
 update_gitignore_ai_section() {
@@ -236,6 +286,7 @@ echo -e "\n${BLUE}Summary:${NC}"
 echo "  - AI_AGENT.md is the source file for both CLAUDE.md and GEMINI.md"
 echo "  - Command symlinks in: .claude/commands/"
 echo "  - Agent symlinks in: .claude/agents/"
+echo "  - Settings merged into: .claude/settings.json"
 echo "  - All symlinks added to .gitignore"
 echo -e "\n${YELLOW}Remember to run '/hello' when starting a new Claude session!${NC}"
 

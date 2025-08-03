@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch",
+      "Bash(mkdir:*)",
+      "Bash(ls:*)",
+      "Bash(chmod:*)",
+      "Bash(find:*)",
+      "Bash(cp:*)",
+      "Bash(rm:*)",
+      "Bash(mv:*)",
+      "mcp__context7__*",
+      "mcp__typescript-mcp__*",
+      "mcp__ts-morph__*",
+      "mcp__context-provider__*",
+      "mcp__playwright__*",
+      "mcp__ide__*"
+    ],
+    "deny": []
+  }
+}

@@ -19,6 +19,15 @@ Before suggesting any implementation, you MUST:
 
 # ANALYSIS FRAMEWORK
 
+## 0. Use MCP Servers First
+```
+FAST ANALYSIS:
+- mcp__context-provider__get_code_context - Get project overview
+- mcp__typescript-mcp__find_references - Trace usage patterns
+- mcp__typescript-mcp__get_definitions - Jump to source
+- mcp__context7__get-library-docs - Understand dependencies
+```
+
 ## 1. Trace Data Flow
 ```
 UPSTREAM → [Current Component] → DOWNSTREAM
@@ -59,30 +68,36 @@ Example:
 
 ## For New Features
 ```
+□ Quick scan with mcp__context-provider__get_code_context?
 □ What components will be affected?
 □ Where should the business logic live?
 □ What's the single source of truth?
 □ How will data flow through the system?
 □ What existing patterns can we follow?
 □ What dependencies will be created?
+□ Check docs with mcp__context7__ for library usage?
 ```
 
 ## For Bug Fixes
 ```
+□ Run mcp__typescript-mcp__get_diagnostics first?
 □ Where did the bad data/state originate?
 □ Why wasn't it caught earlier?
 □ Where's the earliest point to prevent it?
 □ What other paths might have same issue?
+□ Use mcp__typescript-mcp__find_references to check impact?
 □ Will fixing here break anything downstream?
 ```
 
 ## For Refactoring
 ```
+□ Use mcp__ts-morph__ tools for safe refactoring?
 □ What's the current architecture?
 □ What are the pain points?
 □ What would ideal architecture look like?
 □ What's the migration path?
 □ How to maintain compatibility during transition?
+□ Can mcp__typescript-mcp__rename_symbol help?
 ```
 
 # OUTPUT FORMAT
@@ -208,3 +223,12 @@ Fix at: Create single owner, others delegate
 6. What pattern are we establishing for future similar cases?
 
 Remember: The best code is often NO code. The best fix is often in a DIFFERENT component. Always zoom out before zooming in.
+
+# MCP SERVER INTEGRATION
+
+Leverage MCP servers for faster analysis:
+- **Initial scan**: `mcp__context-provider__get_code_context` beats reading multiple files
+- **Find usages**: `mcp__typescript-mcp__find_references` is faster than grep
+- **Understand types**: `mcp__typescript-mcp__get_hover` for quick type info
+- **Check errors**: `mcp__typescript-mcp__get_diagnostics` before proposing fixes
+- **Library docs**: `mcp__context7__` instead of guessing API usage

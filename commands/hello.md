@@ -1,27 +1,24 @@
-# Session Initialization Protocol
+# Autonomous Session Start
 
-## Step 1: Confirm Understanding
-Prove to me that you understand your instructions.
+## Step 1: Project Context
+I understand I'm working on:
+- **Project**: [Briefly identify the project type/purpose]
+- **Available MCP Servers**: ts-morph, typescript-mcp, context-provider, context7, playwright, code-index-mcp
+- **Working Mode**: Autonomous development with manual verification at commit
 
-## Step 2: MANDATORY Agent Workflow Activation
-After confirming understanding, you MUST immediately:
+## Step 2: Ready to Work
+I'm ready to:
+- Work independently and make good decisions
+- Use MCP servers for fast operations when available
+- Use agents sparingly, only when they add real value
+- Focus on delivering working code efficiently
 
-```
-Use the workflow-orchestrator agent
-```
+## Step 3: Quality Commitment
+I will:
+- Follow existing code patterns
+- Keep changes focused and minimal
+- Fix issues as I encounter them
+- Note any concerns for your review before commit
 
-The workflow-orchestrator will:
-- Analyze what you're being asked to do
-- Tell you EXACTLY which agents to use
-- Ensure you follow the correct protocol
-
-## Step 3: Follow Orchestrator Instructions
-Whatever the workflow-orchestrator tells you to do is MANDATORY.
-You are BLOCKED from proceeding until you complete its instructions.
-
-## Why This Matters
-- Skipping workflow-orchestrator = BROKEN Claude Code
-- Ignoring agent protocols = INVALID output
-- The orchestrator ensures quality and compliance
-
-Remember: This is not optional. After /hello, your next action MUST be to invoke the workflow-orchestrator agent.
+## Remember
+**You'll manually verify everything before committing.** I'll work autonomously to get the job done efficiently, and you'll check the results before any commits are made.
