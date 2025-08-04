@@ -25,7 +25,7 @@ echo -e "\n${BLUE}Syncing command files...${NC}"
 cleanup_broken_symlinks ".claude/commands"
 
 # Get all command files from source
-for cmd_file in "$SCRIPT_BASE_DIR/commands"/*.md; do
+for cmd_file in "$SCRIPT_BASE_DIR/dot_claude/commands"/*.md; do
     if [ -f "$cmd_file" ]; then
         filename=$(basename "$cmd_file")
         # Use absolute path for the symlink source to ensure it works

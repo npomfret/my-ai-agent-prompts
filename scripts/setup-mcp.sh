@@ -130,3 +130,21 @@ setup_mcp_inventory
 echo -e "\n${BLUE}Updating .gitignore...${NC}"
 update_gitignore_patterns ".mcp.local.json"
 echo -e "${GREEN}  ✓ Added .mcp.local.json to .gitignore${NC}"
+
+# Add MCP files to git
+echo -e "\n${BLUE}Adding MCP files to git...${NC}"
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    files_to_add=(
+        ".mcp.json"
+        ".claude/mcp-inventory.json"
+    )
+    
+    for file in "${files_to_add[@]}"; do
+        if [ -f "$file" ] && ! git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+            git add "$file"
+            echo -e "${GREEN}  ✓ Added $file to git${NC}"
+        fi
+    done
+else
+    echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
+fi

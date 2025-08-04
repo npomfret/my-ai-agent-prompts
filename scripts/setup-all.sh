@@ -124,6 +124,40 @@ merge_settings_json
 echo -e "\n${BLUE}6. Setting up MCP servers...${NC}"
 "$SCRIPT_DIR/setup-mcp.sh" "$TARGET_DIR"
 
+# Add necessary files to git
+echo -e "\n${BLUE}7. Adding necessary files to git...${NC}"
+add_files_to_git() {
+    # Check if we're in a git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        local files_to_add=(
+            "AI_AGENT.md"
+            ".mcp.json"
+            ".claude/settings.json"
+            ".claude/mcp-inventory.json"
+            ".claude/agent-inventory.json"
+        )
+        
+        local added_files=()
+        for file in "${files_to_add[@]}"; do
+            if [ -f "$file" ] && ! git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+                git add "$file"
+                added_files+=("$file")
+                echo -e "${GREEN}  ✓ Added $file to git${NC}"
+            fi
+        done
+        
+        if [ ${#added_files[@]} -eq 0 ]; then
+            echo -e "${BLUE}  All necessary files already tracked by git${NC}"
+        else
+            echo -e "${GREEN}  ✓ Added ${#added_files[@]} files to git${NC}"
+        fi
+    else
+        echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
+    fi
+}
+
+add_files_to_git
+
 # Final summary
 echo -e "\n${GREEN}✅ Setup complete!${NC}"
 echo -e "\n${BLUE}Summary:${NC}"
@@ -133,4 +167,5 @@ echo "  - Agent symlinks in: .claude/agents/"
 echo "  - Settings merged into: .claude/settings.json"
 echo "  - MCP servers configured in: .mcp.json"
 echo "  - All symlinks and .mcp.local.json added to .gitignore"
+echo "  - Necessary files added to git"
 echo -e "\n${YELLOW}Remember to use '/p' before every request for intelligent tool selection!${NC}"

@@ -48,7 +48,7 @@ This agent-based approach is much more effective than traditional CLAUDE.md inst
 
 Once you've run `setup-all.sh` and started a new Claude Code session, here's your workflow:
 
-### 1. **Start Every Request with `/p`**
+### 1. **Start Every Request with `/p` (`p` for prompt) **
 
 ```
 /p analyze performance issues in my app

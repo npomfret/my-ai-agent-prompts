@@ -75,6 +75,17 @@ setup_agent_inventory() {
 echo -e "\n${BLUE}Setting up agent inventory...${NC}"
 setup_agent_inventory
 
+# Add agent inventory to git
+echo -e "\n${BLUE}Adding agent inventory to git...${NC}"
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    if [ -f ".claude/agent-inventory.json" ] && ! git ls-files --error-unmatch ".claude/agent-inventory.json" >/dev/null 2>&1; then
+        git add ".claude/agent-inventory.json"
+        echo -e "${GREEN}  ✓ Added .claude/agent-inventory.json to git${NC}"
+    fi
+else
+    echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
+fi
+
 # List what was set up
 echo -e "\n${BLUE}Linked agents:${NC}"
 ls -la .claude/agents/*.md 2>/dev/null | awk '{print "  - " $NF}' | sed 's|.*/||'
