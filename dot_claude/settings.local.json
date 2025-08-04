@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git pull:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(../setup-project-links.sh .)",
+      "Bash(jq:*)",
+      "Bash(npx:*)",
+      "Bash(npm search:*)"
+    ],
+    "deny": []
+  }
+}

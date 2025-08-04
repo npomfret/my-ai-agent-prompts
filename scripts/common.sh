@@ -142,3 +142,35 @@ get_symlink_gitignore_patterns() {
     
     echo "${patterns[@]}"
 }
+
+# Function to calculate relative path between two absolute paths
+# Works on macOS without GNU coreutils
+calculate_relative_path() {
+    local source="$1"
+    local target="$2"
+    
+    # Get the canonical absolute paths
+    source="$(cd "$(dirname "$source")" && pwd)/$(basename "$source")"
+    target="$(cd "$(dirname "$target")" && pwd)/$(basename "$target")"
+    
+    # Remove common prefix
+    local common_part="$source"
+    local result=""
+    
+    while [ "${target#$common_part}" = "$target" ]; do
+        common_part="$(dirname "$common_part")"
+        if [ -z "$result" ]; then
+            result=".."
+        else
+            result="../$result"
+        fi
+    done
+    
+    if [ "$common_part" = "/" ]; then
+        result="$result$target"
+    else
+        result="$result${target#$common_part/}"
+    fi
+    
+    echo "$result"
+}

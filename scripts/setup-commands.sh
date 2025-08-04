@@ -28,9 +28,8 @@ cleanup_broken_symlinks ".claude/commands"
 for cmd_file in "$SCRIPT_BASE_DIR/commands"/*.md; do
     if [ -f "$cmd_file" ]; then
         filename=$(basename "$cmd_file")
-        # Calculate relative path from target to source
-        relative_path="$(realpath --relative-to="$TARGET_DIR/.claude/commands" "$cmd_file")"
-        create_symlink "$relative_path" ".claude/commands/$filename" "commands/$filename"
+        # Use absolute path for the symlink source to ensure it works
+        create_symlink "$cmd_file" ".claude/commands/$filename" "commands/$filename"
     fi
 done
 

@@ -25,12 +25,11 @@ echo -e "\n${BLUE}Syncing agent files...${NC}"
 cleanup_broken_symlinks ".claude/agents"
 
 # Get all agent files from source
-for agent_file in "$SCRIPT_BASE_DIR/.claude/agents"/*.md; do
+for agent_file in "$SCRIPT_BASE_DIR/dot_claude/agents"/*.md; do
     if [ -f "$agent_file" ]; then
         filename=$(basename "$agent_file")
-        # Calculate relative path from target to source
-        relative_path="$(realpath --relative-to="$TARGET_DIR/.claude/agents" "$agent_file")"
-        create_symlink "$relative_path" ".claude/agents/$filename" "agents/$filename"
+        # Use absolute path for the symlink source to ensure it works
+        create_symlink "$agent_file" ".claude/agents/$filename" "agents/$filename"
     fi
 done
 

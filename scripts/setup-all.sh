@@ -18,7 +18,7 @@ cd "$TARGET_DIR"
 
 # Function to merge settings.json
 merge_settings_json() {
-    local source_settings="$SCRIPT_BASE_DIR/.claude/settings.json"
+    local source_settings="$SCRIPT_BASE_DIR/dot_claude/settings.json"
     local target_settings=".claude/settings.json"
     
     # Check if source settings exists
