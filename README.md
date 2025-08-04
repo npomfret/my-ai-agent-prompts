@@ -42,21 +42,65 @@ Claude Code automatically merges both files when loading MCP servers.
 
 This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore.
 
-## 🚀 Quick Start: Use `/p` for Everything
+## 🚀 Quick Start: The Workflow
 
-Start EVERY request with `/p` to get intelligent tool selection:
+### After Setup
+
+Once you've run `setup-all.sh` and started a new Claude Code session, here's your workflow:
+
+### 1. **Start Every Request with `/p`**
 
 ```
-/p analyze this codebase for performance issues
-/p fix the bug in issue #123
-/p add dark mode to the settings page
+/p analyze performance issues in my app
+/p fix the bug in user authentication  
+/p add a new feature for dark mode
 ```
 
 The `/p` command automatically:
-- Selects the best MCP servers and subagents
-- Sequences them in optimal order
+- Analyzes your intent
+- Selects relevant MCP servers and subagents
+- Sequences them optimally
 - Handles session initialization on first use
-- Teaches you the tool ecosystem
+
+### 2. **First `/p` Command Initializes the Session**
+
+The first time you use `/p` in a session, it will:
+- Use `mcp__context-provider__get_code_context` to understand your project
+- Note available MCP servers from `.mcp.json`
+- Set MCP-first working mode
+- Configure the session for optimal tool usage
+
+### 3. **Subsequent Commands**
+
+After initialization, `/p` will:
+- Analyze each request
+- Select the best tools (MCP servers + subagents)
+- Sequence them optimally
+- Execute with proper workflow
+
+### 4. **Helper Commands Available**
+
+- `/mcp-list` - See all MCP servers and their capabilities
+- `/agent-list` - See all subagents organized by type
+- `/fix` - Find one thing to improve in the codebase
+
+### Example Workflow:
+
+```
+# Session start
+/p understand this React application
+
+# Bug fix  
+/p fix issue #123 with login timeout
+
+# New feature
+/p add export functionality to user dashboard
+
+# Analysis
+/p find all performance bottlenecks
+```
+
+The key is: **always start with `/p`** - it handles everything else automatically.
 
 As a general approach, I create a `docs/tasks` directory in the root of every project.  Form here I add subdirectories, or not, as needed, and write all my bug reports, feature planning, refactorings as `.md` files. 
 
@@ -195,3 +239,30 @@ Enhanced: "Start with architect-advisor for auth architecture. Use mcp__context7
 - `/p [prompt]` - Analyze and enhance your prompt with optimal tools
 
 The meta-prompt system eliminates cognitive load by automatically selecting the best tools for your task while teaching you the ecosystem through its suggestions.
+
+## Inventory System
+
+The `/p` command relies on two inventory files that document all available tools:
+
+### MCP Inventory (`.claude/mcp-inventory.json`)
+
+Documents all MCP servers with:
+- **Name**: How to invoke it (e.g., `mcp__context7__`)
+- **Purpose**: What the server does
+- **Capabilities**: List of specific features
+- **Trigger Keywords**: Words that suggest using this server
+- **Common Uses**: Example scenarios
+
+This file is automatically copied during setup and serves as the single source of truth for MCP server capabilities.
+
+### Agent Inventory (`.claude/agent-inventory.json`)  
+
+Documents all subagents with:
+- **Type**: Category (meta, planning, analysis, verification, etc.)
+- **Purpose**: What the agent does
+- **When to Use**: Specific triggers and timing
+- **Order**: Execution sequence (e.g., "always_first", "after_code_changes")
+- **Combines**: Which individual agents it wraps
+- **Workflow Patterns**: Predefined sequences for common tasks
+
+These inventory files enable the `/p` command to intelligently match your request with the right tools without you needing to memorize names or capabilities.
