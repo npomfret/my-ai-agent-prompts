@@ -89,14 +89,14 @@ EFFICIENT APPROACH:
 
 ## Pattern: Just Wrote Code
 ```
-QUALITY CHECK OPTIONS:
+MANDATORY QUALITY CHECKS:
 1. Fast diagnostics: mcp__typescript-mcp__get_diagnostics
-2. Run tests directly with bash if you know the command
-3. Optional agents if you want extra validation:
+2. scope-guardian agent (MANDATORY - ensures no scope violations)
+3. Run tests directly with bash if you know the command
+4. Optional agents for extra validation:
    - code-quality-enforcer (for style issues)
-   - scope-guardian (if worried about scope creep)
 
-Reminder: User will verify before commit
+CRITICAL: scope-guardian must ALWAYS run after code changes to prevent scope creep
 ```
 
 ## Pattern: Test Cleanup/Refactoring
