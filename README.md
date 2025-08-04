@@ -42,7 +42,21 @@ Claude Code automatically merges both files when loading MCP servers.
 
 This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore.
 
-On starting a new claude shell, always run `/hello` first (this includes mandatory workflow initialization).
+## 🚀 Quick Start: Use `/p` for Everything
+
+Start EVERY request with `/p` to get intelligent tool selection:
+
+```
+/p analyze this codebase for performance issues
+/p fix the bug in issue #123
+/p add dark mode to the settings page
+```
+
+The `/p` command automatically:
+- Selects the best MCP servers and subagents
+- Sequences them in optimal order
+- Handles session initialization on first use
+- Teaches you the tool ecosystem
 
 As a general approach, I create a `docs/tasks` directory in the root of every project.  Form here I add subdirectories, or not, as needed, and write all my bug reports, feature planning, refactorings as `.md` files. 
 
@@ -63,8 +77,8 @@ We now have specialized subagents that enforce our directives automatically. The
 - **workflow-orchestrator**: MUST BE USED FIRST - tells you exactly which agents to use for your current task
 
 #### Core Task Agents
-- **analyst**: Performs comprehensive codebase analysis (replaces `/analyse` command)
-- **auditor**: Reviews changes and creates commit messages (replaces `/changes` command)
+- **analyst**: Performs comprehensive codebase analysis 
+- **auditor**: Reviews changes and creates commit messages
 - **architect-advisor**: Analyzes system architecture and data flows to advise WHERE changes should be made
 - **test-cleanup**: Enforces proper test cleanup - tests must be FIXED or DELETED, never skipped
 
@@ -141,3 +155,43 @@ Use the test-for-future-detector and then test-runner agents
 - Agents have their own context windows (100k tokens each)
 - Agents cannot modify directive files (immutable principles)
 - All agents report pass/fail with specific details
+
+## Meta-Prompt System
+
+The `/p` command provides intelligent prompt enhancement by automatically analyzing your request and suggesting relevant MCP servers and subagents.
+
+### How It Works
+
+Instead of remembering which tools to use, simply prefix your prompt with `/p`:
+
+```
+/p analyze performance issues in my React app
+```
+
+The meta-prompt analyzer will:
+1. Analyze your intent
+2. Identify relevant MCP servers (for data/tools)
+3. Suggest appropriate subagents (for enforcement/analysis)
+4. Return an enhanced prompt with optimal tool usage
+
+### Example Enhanced Prompts
+
+**Performance Analysis:**
+```
+Original: /p find performance bottlenecks
+Enhanced: "Use architect-advisor to understand app structure. Use mcp__typescript-mcp__ for React analysis and mcp__context7__ for codebase search. Run analyst agent for comprehensive report."
+```
+
+**Bug Fix:**
+```
+Original: /p fix login bug #123
+Enhanced: "Start with architect-advisor for auth architecture. Use mcp__context7__ to find login code. After fix, run test-runner and auditor."
+```
+
+### Helper Commands
+
+- `/mcp-list` - Show all available MCP servers with descriptions
+- `/agent-list` - Show all subagents organized by type
+- `/p [prompt]` - Analyze and enhance your prompt with optimal tools
+
+The meta-prompt system eliminates cognitive load by automatically selecting the best tools for your task while teaching you the ecosystem through its suggestions.

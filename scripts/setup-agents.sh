@@ -59,6 +59,22 @@ if [ ${#patterns[@]} -gt 0 ]; then
     echo -e "${GREEN}  ✓ Added ${#patterns[@]} agent patterns to .gitignore${NC}"
 fi
 
+# Copy agent inventory file if it doesn't exist
+setup_agent_inventory() {
+    local inventory_file=".claude/agent-inventory.json"
+    
+    if [ ! -f "$inventory_file" ]; then
+        cp "$SCRIPT_BASE_DIR/dot_claude/agent-inventory.json" "$inventory_file"
+        echo -e "${GREEN}  ✓ Created agent inventory file${NC}"
+    else
+        echo -e "${BLUE}  Agent inventory file already exists${NC}"
+    fi
+}
+
+# Setup agent inventory
+echo -e "\n${BLUE}Setting up agent inventory...${NC}"
+setup_agent_inventory
+
 # List what was set up
 echo -e "\n${BLUE}Linked agents:${NC}"
 ls -la .claude/agents/*.md 2>/dev/null | awk '{print "  - " $NF}' | sed 's|.*/||'

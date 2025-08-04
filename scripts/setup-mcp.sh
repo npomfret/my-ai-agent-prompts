@@ -41,6 +41,10 @@ setup_mcp_json() {
     "context-provider": {
       "command": "npx",
       "args": ["-y", "code-context-provider-mcp"]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }
@@ -72,6 +76,10 @@ EOF
               "context-provider": {
                 "command": "npx",
                 "args": ["-y", "code-context-provider-mcp"]
+              },
+              "playwright": {
+                "command": "npx",
+                "args": ["-y", "@playwright/mcp@latest"]
               }
             }'
             
@@ -100,6 +108,23 @@ EOF
 # Setup MCP servers
 echo -e "\n${BLUE}Setting up .mcp.json...${NC}"
 setup_mcp_json
+
+# Copy MCP inventory file if it doesn't exist
+setup_mcp_inventory() {
+    local inventory_file=".claude/mcp-inventory.json"
+    
+    if [ ! -f "$inventory_file" ]; then
+        mkdir -p ".claude"
+        cp "$SCRIPT_BASE_DIR/dot_claude/mcp-inventory.json" "$inventory_file"
+        echo -e "${GREEN}  ✓ Created MCP inventory file${NC}"
+    else
+        echo -e "${BLUE}  MCP inventory file already exists${NC}"
+    fi
+}
+
+# Setup MCP inventory
+echo -e "\n${BLUE}Setting up MCP inventory...${NC}"
+setup_mcp_inventory
 
 # Update .gitignore with .mcp.local.json
 echo -e "\n${BLUE}Updating .gitignore...${NC}"
