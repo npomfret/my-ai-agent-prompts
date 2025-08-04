@@ -46,6 +46,7 @@ setup_mcp_json() {
 }
 EOF
         echo -e "${GREEN}  ✓ Created .mcp.json with MCP servers${NC}"
+        echo -e "${BLUE}  Tip: Create .mcp.local.json for personal MCP servers (gitignored)${NC}"
     else
         echo -e "${BLUE}  .mcp.json already exists${NC}"
         
@@ -100,7 +101,7 @@ EOF
 echo -e "\n${BLUE}Setting up .mcp.json...${NC}"
 setup_mcp_json
 
-# Update .gitignore with .mcp.json
+# Update .gitignore with .mcp.local.json
 echo -e "\n${BLUE}Updating .gitignore...${NC}"
-update_gitignore_patterns ".mcp.json"
-echo -e "${GREEN}  ✓ Added .mcp.json to .gitignore${NC}"
+update_gitignore_patterns ".mcp.local.json"
+echo -e "${GREEN}  ✓ Added .mcp.local.json to .gitignore${NC}"

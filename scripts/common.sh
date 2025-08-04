@@ -69,7 +69,7 @@ update_gitignore_patterns() {
             /^CLAUDE\.md$/ { next; }
             /^GEMINI\.md$/ { next; }
             /^directives$/ { next; }
-            /^\.mcp\.json$/ { next; }
+            /^\.mcp\.local\.json$/ { next; }
             /^\.claude\/commands\// { next; }
             /^\.claude\/agents\// { next; }
             { print }
@@ -83,11 +83,13 @@ update_gitignore_patterns() {
         touch "$temp_file"
     fi
     
-    # Get all existing AI patterns from the temp file
+    # Get all existing AI patterns from the current .gitignore
     local existing_patterns=()
     if [ -f .gitignore ]; then
-        # Extract existing AI patterns
-        awk -v header="$ai_section_header" '
+        # Extract existing AI patterns and store them
+        while IFS= read -r line; do
+            existing_patterns+=("$line")
+        done < <(awk -v header="$ai_section_header" '
             BEGIN { in_ai_section = 0; }
             $0 == header { in_ai_section = 1; next; }
             in_ai_section && /^[[:space:]]*$/ { in_ai_section = 0; next; }
@@ -95,12 +97,10 @@ update_gitignore_patterns() {
             /^CLAUDE\.md$/ { print; }
             /^GEMINI\.md$/ { print; }
             /^directives$/ { print; }
-            /^\.mcp\.json$/ { print; }
+            /^\.mcp\.local\.json$/ { print; }
             /^\.claude\/commands\// { print; }
             /^\.claude\/agents\// { print; }
-        ' .gitignore | while read -r line; do
-            existing_patterns+=("$line")
-        done
+        ' .gitignore)
     fi
     
     # Add new patterns to existing ones

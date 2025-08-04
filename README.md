@@ -29,9 +29,16 @@ The `setup-all.sh` script automatically:
 - Syncs all command files to `.claude/commands/`
 - Syncs all agent files to `.claude/agents/`
 - Merges `.claude/settings.json` permissions
-- Sets up `.mcp.json` with default MCP servers
-- Updates `.gitignore` with all symlinked paths
+- Sets up `.mcp.json` with default MCP servers (checked into git)
+- Updates `.gitignore` with all symlinked paths and `.mcp.local.json`
 - Handles additions/removals - safe to re-run anytime
+
+### MCP Configuration
+
+- `.mcp.json` - Team-shared MCP server configuration (committed to git)
+- `.mcp.local.json` - Personal MCP additions like API keys (gitignored)
+
+Claude Code automatically merges both files when loading MCP servers.
 
 This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore.
 
