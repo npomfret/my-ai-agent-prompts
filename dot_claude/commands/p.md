@@ -1,75 +1,48 @@
 ---
-description: Meta-prompt analyzer that enhances your prompts with relevant MCP servers and subagents
+description: Intelligent prompt enhancer that automatically selects and executes optimal MCP servers and subagents
 ---
 
-# Meta-Prompt Analyzer
+# Prompt Enhancer
 
-## Session Initialization Check
-First, check if this is the first `/p` command in this session. If so, initialize by:
-1. Using `mcp__context-provider__get_code_context` to understand the project
-2. Noting available MCP servers from `.mcp.json`
-3. Setting MCP-first working mode
+This command analyzes your request and automatically executes it with the optimal MCP servers and subagents.
 
-## Prompt Analysis
+**User Request**: $ARGUMENTS
 
-Analyze the following user prompt and enhance it by identifying relevant MCP servers and subagents that should be used.
+## Execution Plan
 
-**Original Prompt**: $ARGUMENTS
+I'll analyze your request and execute it using the best tools:
 
-## Analysis Instructions
+### 1. Session Initialization (if first use)
+- Use `mcp__context-provider__get_code_context` to understand the project
+- Note available MCP servers from `.mcp.json` and `.claude/mcp-inventory.json`
+- Load agent capabilities from `.claude/agent-inventory.json`
 
-1. **Identify Task Type**:
-   - Is this a new feature, bug fix, refactoring, analysis, or general query?
-   - What is the primary goal?
+### 2. Request Analysis & Tool Selection
 
-2. **Match MCP Servers**:
-   - Check if the task involves:
-     - TypeScript/JavaScript analysis → suggest `mcp__typescript-mcp__`
-     - General code context/search → suggest `mcp__context7__`
-     - TypeScript refactoring → suggest `mcp__ts-morph__`
-     - Code context analysis → suggest `mcp__context-provider__`
-     - Browser automation → suggest `mcp__playwright__`
-     - IDE diagnostics → suggest `mcp__ide__`
+**Analysis Keywords in your request**:
+- Code search/understanding: → `mcp__context7__`
+- TypeScript/JavaScript analysis: → `mcp__typescript-mcp__`
+- Code refactoring: → `mcp__ts-morph__`
+- Enhanced context: → `mcp__context-provider__`
+- Browser/E2E testing: → `mcp__playwright__`
+- IDE diagnostics/errors: → `mcp__ide__`
 
-3. **Match Subagents**:
-   - For ANY code changes → start with `architect-advisor`
-   - For analysis tasks → use `analyst`
-   - For testing → use `test-runner` (always at the end)
-   - For quality checks → use detection agents in parallel:
-     - `scope-creep-detector`
-     - `no-fallback-detector`
-     - `style-enforcer`
-     - `duplicate-detector`
-     - `comment-detector`
-   - For commits → end with `auditor`
+**Task Type Detection**:
+- New features → `architect-advisor` first, then quality agents, then `test-runner`, then `auditor`
+- Bug fixes → `architect-advisor` first, then fix, then `test-runner`, then `auditor`
+- Analysis → `analyst` agent
+- Refactoring → `architect-advisor`, then refactor, then quality agents, then `test-runner`
+- General queries → Appropriate MCP servers only
 
-4. **Generate Enhanced Prompt**:
-   Create a new version of the prompt that:
-   - Explicitly mentions which MCP servers to use and why
-   - Specifies the order of subagents to invoke
-   - Includes specific instructions for each tool
-   - Maintains the original intent while adding tool guidance
+### 3. Automatic Execution
 
-## Output Format
+Based on the analysis above, I will now:
 
-Provide:
-1. **Task Classification**: [feature/bug/refactor/analysis/other]
-2. **Recommended MCP Servers**: List with purpose for each
-3. **Recommended Subagents**: Ordered list with timing
-4. **Enhanced Prompt**: The full enhanced version of the original prompt
+1. **Select the optimal MCP servers** based on keywords in your request
+2. **Choose the right subagents** based on the task type
+3. **Execute your request immediately** using the selected tools
+4. **Show you which tools I selected** so you learn the system
 
-## Examples
+---
 
-### Example 1: "Fix the login bug"
-- **Classification**: bug
-- **MCP Servers**: `mcp__context7__` (search for auth code)
-- **Subagents**: `architect-advisor` → make fix → `test-runner` → `auditor`
-- **Enhanced**: "First use architect-advisor to understand the authentication architecture. Then use mcp__context7__ to search for login-related code. After fixing the bug, use test-runner to verify the fix works and auditor to create the commit."
-
-### Example 2: "Analyze performance issues"
-- **Classification**: analysis
-- **MCP Servers**: `mcp__typescript-mcp__` (AST analysis), `mcp__context7__` (broad search)
-- **Subagents**: `analyst` → `architect-advisor`
-- **Enhanced**: "Use analyst agent to perform comprehensive performance analysis. Leverage mcp__typescript-mcp__ for AST-level analysis of React components and mcp__context7__ to identify performance bottlenecks across the codebase."
-
-Now analyze the user's prompt and provide the enhanced version.
+**Executing your enhanced request now...**

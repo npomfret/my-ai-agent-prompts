@@ -58,9 +58,10 @@ Once you've run `setup-all.sh` and started a new Claude Code session, here's you
 
 The `/p` command automatically:
 - Analyzes your intent
-- Selects relevant MCP servers and subagents
-- Sequences them optimally
+- Selects the best MCP servers and subagents
+- **Immediately executes your request** with optimal tools
 - Handles session initialization on first use
+- Shows you which tools were selected so you learn
 
 ### 2. **First `/p` Command Initializes the Session**
 
@@ -70,13 +71,13 @@ The first time you use `/p` in a session, it will:
 - Set MCP-first working mode
 - Configure the session for optimal tool usage
 
-### 3. **Subsequent Commands**
+### 3. **How It Works**
 
-After initialization, `/p` will:
-- Analyze each request
-- Select the best tools (MCP servers + subagents)
-- Sequence them optimally
-- Execute with proper workflow
+Every time you use `/p`, it will:
+- Analyze your request for keywords and intent
+- Select the optimal MCP servers and subagents
+- **Automatically execute your request** using the selected tools
+- Show you which tools were chosen so you learn the system
 
 ### 4. **Helper Commands Available**
 
@@ -238,7 +239,7 @@ Enhanced: "Start with architect-advisor for auth architecture. Use mcp__context7
 - `/agent-list` - Show all subagents organized by type
 - `/p [prompt]` - Analyze and enhance your prompt with optimal tools
 
-The meta-prompt system eliminates cognitive load by automatically selecting the best tools for your task while teaching you the ecosystem through its suggestions.
+The meta-prompt system eliminates cognitive load by automatically selecting and executing the best tools for your task while teaching you the ecosystem through transparent tool selection.
 
 ## Inventory System
 
