@@ -4,11 +4,11 @@ MCP is an open standard for connecting AI assistants to external tools and data 
 
 ## Quick Setup
 
-Add server definitions to your `~/.claude.json` file:
+Add server definitions to your `.mcp.json` file in the root of your project:
 
 ```json
-  ...,
-    "mcpServers": {
+{
+  "mcpServers": {
       "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -37,8 +37,8 @@ Add server definitions to your `~/.claude.json` file:
         "code-context-provider-mcp"
       ]
     }
-  },
-
+  }
+}
 ```
 
 - npx handles auto-installation of packages
@@ -239,8 +239,10 @@ pipx install uv
 ## General MCP Best Practices
 
 ### 1. Configuration Management
-- **User-scoped servers**: Available across all projects
-- **Project-scoped servers**: Specific to directories
+- **Project-scoped servers**: Configure in `.mcp.json` at your project root
+  - This is the recommended approach for project-specific MCP servers
+  - The `setup-project-links.sh` script automatically creates this file
+- **User-scoped servers**: Configure in `~/.claude.json` for global access
 - **Direct config editing**: Best for complex configurations
 - **Environment variables**: Use for sensitive data
 
