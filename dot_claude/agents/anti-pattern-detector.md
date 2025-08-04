@@ -79,6 +79,10 @@ RED FLAGS:
 - Patches on top of patches
 ```
 
+## 6. The "helper"
+```
+The helper pattern is a toold for the lazy and stupid.  Embrace encapulation! Use objects with state and behaviour instead of littering the code with static functions.
+```
 # SEVERITY LEVELS
 
 ## CRITICAL (Must fix immediately):
