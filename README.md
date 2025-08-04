@@ -4,21 +4,32 @@ For Claude Code and Gemini Cli (kind of).
 
 ## Project Setup
 
-Use the `setup-project-links.sh` script to automatically configure a new project with AI agent prompts:
+Use the modular setup scripts in the `scripts/` directory to configure a new project with AI agent prompts:
 
 ```shell
-# From within your target project
-../my-ai-agent-prompts/setup-project-links.sh
-
-# Or specify a target directory
-./setup-project-links.sh /path/to/target/project
+# Complete setup (from within your target project)
+../my-ai-agent-prompts/scripts/setup-all.sh
 ```
 
-The script automatically:
+```shell
+# Or specify a target directory
+./scripts/setup-all.sh /path/to/target/project
+```
+
+```shell
+# Individual setup scripts (optional)
+./scripts/setup-commands.sh [path]  # Only set up command symlinks
+./scripts/setup-agents.sh [path]    # Only set up agent symlinks  
+./scripts/setup-mcp.sh [path]       # Only set up MCP configuration
+```
+
+The `setup-all.sh` script automatically:
 - Creates `AI_AGENT.md` if it doesn't exist (from template or basic version)
 - Symlinks `CLAUDE.md` and `GEMINI.md` to `AI_AGENT.md` for shared configuration
 - Syncs all command files to `.claude/commands/`
 - Syncs all agent files to `.claude/agents/`
+- Merges `.claude/settings.json` permissions
+- Sets up `.mcp.json` with default MCP servers
 - Updates `.gitignore` with all symlinked paths
 - Handles additions/removals - safe to re-run anytime
 
