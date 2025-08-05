@@ -6,6 +6,6 @@ description: Quick optimizer - invokes the powerful meta-prompt agent for intell
 
 **User Request**: $ARGUMENTS
 
-I'll use the meta-prompt agent to analyze your request and execute it with the optimal combination of MCP servers, built-in tools, and specialized agents.
+**STRICT SCOPE ENFORCEMENT**: I will do EXACTLY what you asked - nothing more, nothing less. Questions will be answered without taking action.
 
-Use the meta-prompt agent to handle this request: "$ARGUMENTS"
+Use the meta-prompt agent to handle this request with STRICT scope discipline: "$ARGUMENTS"
