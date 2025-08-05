@@ -1,3 +1,8 @@
+---
+description: Comprehensive codebase analysis to identify improvements
+argument-hint: [specific area or leave blank for full analysis]
+---
+
 # Code Analysis & Improvement Guide
 
 Analyze the entire project (use `git ls-files` to filter out noise) and identify all areas for improvement. Be creative and VERY thorough. Consider multiple approaches to solve each problem you encounter.

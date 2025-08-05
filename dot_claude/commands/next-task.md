@@ -1,3 +1,7 @@
+---
+description: Analyze tasks and select the most appropriate next task
+---
+
 # Next task
 
 {{if $ARGUMENTS}}

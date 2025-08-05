@@ -1,3 +1,8 @@
+---
+description: Show uncommitted changes in the current project
+allowed-tools: Bash(git status:*), Bash(git diff:*)
+---
+
 # Changes
 
 Analyze the current change set from a fresh perspective, and critique it. 
