@@ -46,6 +46,8 @@ Parse request for:
 - Target files/patterns
 - Required capabilities
 - Scope boundaries - what was NOT asked
+
+Match against trigger_keywords from your loaded inventories
 ```
 
 ## 3. Tool Selection & Execution
@@ -53,5 +55,17 @@ Parse request for:
 1. Match the request against your inventory (MCP servers and agents)
 2. If an MCP server matches: include "use [server_name]" in your response
    - Say what you're doing, then add the trigger: "Checking API docs. use context7"
-3. If no MCP matches: use agents or built-in tools (Grep, Read, Edit, WebSearch, etc.)
+3. If an agent matches: invoke it using the Task tool:
+   ```
+   Task(
+       description="Brief task description",
+       prompt="Detailed instructions for the agent",
+       subagent_type="exact-agent-name"
+   )
+   ```
+4. If neither matches: use built-in tools (Grep, Read, Edit, WebSearch, etc.)
+
+### Task Tool Usage:
+When invoking an agent, use the exact agent name from agent-inventory.json as the subagent_type.
+The agent will receive your prompt and handle the task according to its specialized purpose.
 

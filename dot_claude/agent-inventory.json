@@ -75,6 +75,20 @@
       "combines": ["style-enforcer", "modern-syntax-enforcer", "console-detector", "comment-detector", "duplicate-detector", "mutable-state-detector"],
       "parallel": true
     },
+    "agent-advisor": {
+      "type": "advisor",
+      "purpose": "Lightweight advisor that analyzes prompts and returns matching agent names",
+      "when_to_use": "Used by /p2 command to determine which agents match a request",
+      "trigger_keywords": ["agent advisor", "which agents", "suggest agents"],
+      "order": "flexible"
+    },
+    "mcp-advisor": {
+      "type": "advisor",
+      "purpose": "Lightweight advisor that analyzes prompts and returns matching MCP server names",
+      "when_to_use": "Used by /p2 command to determine which MCP servers match a request",
+      "trigger_keywords": ["mcp advisor", "which mcp", "suggest mcp"],
+      "order": "flexible"
+    },
     "no-fallback-detector": {
       "type": "detector",
       "purpose": "Detects fallback patterns",

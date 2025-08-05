@@ -26,12 +26,12 @@
       "Bash(vitest:*)",
       "Bash(xargs:*)",
       "WebFetch",
-      "mcp__context-provider__*",
-      "mcp__context7__*",
-      "mcp__ide__*",
-      "mcp__playwright__*",
-      "mcp__ts-morph__*",
-      "mcp__typescript-mcp__*"
+      "mcp__context7",
+      "mcp__typescript-mcp",
+      "mcp__ts-morph",
+      "mcp__playwright",
+      "mcp__context-provider",
+      "mcp__ide"
     ],
     "deny": []
   }
