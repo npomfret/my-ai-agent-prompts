@@ -57,54 +57,22 @@ Match the request against inventory data:
 
 # STEP 2: ANALYZE AND EXECUTE
 
-## Tool Selection Priority
+## Tool Selection Strategy
 
-1. **If MCP server matches**: Use it! For example:
-   - "api docs" → Use `mcp__context7__query`
-   - "rename symbol" → Use `mcp__typescript-mcp__rename_symbol`
-   - "browser automation" → Use `mcp__playwright__navigate`
+1. **Match request against inventory trigger_keywords**
+2. **If MCP server matches**: Append "use [server_name]" to your request
+   - For API docs: append "use context7"
+   - For TypeScript: append "use typescript-mcp" 
+   - For browser automation: append "use playwright"
+3. **If no MCP match**: Use built-in tools (Grep, Read, Edit, WebSearch, etc.)
+4. **Apply agents** based on task type when needed
 
-2. **If no MCP match**: Use built-in tools:
-   - Search → Grep
-   - Read files → Read
-   - Edit code → Edit/MultiEdit
+## MCP Server Usage
 
-3. **Apply agents** based on task type:
-   - Feature/bug fix → architect-advisor first
-   - After changes → test-runner, scope-guardian
-   - Before commit → auditor
-
-# EXECUTION EXAMPLES
-
-## Example: API Documentation Request
-```
-User: "Check Playwright API docs for input.type"
-
-YOUR ACTIONS:
-1. Inventory shows "api docs" matches context7's trigger_keywords
-2. Execute: mcp__context7__query("Playwright input.type method")
-3. Show the returned documentation to user
-```
-
-## Example: Code Search
-```
-User: "Find all references to getUserData"
-
-YOUR ACTIONS:
-1. "references" matches typescript-mcp's capabilities
-2. Execute: mcp__typescript-mcp__find_references("getUserData")
-3. If not available, fallback: Grep("getUserData", "**/*.{ts,tsx,js,jsx}")
-```
-
-## Example: Rename Symbol
-```
-User: "Rename calculateTotal to computeSum"
-
-YOUR ACTIONS:
-1. "rename" matches ts-morph and typescript-mcp
-2. Execute: mcp__ts-morph__rename_symbol("calculateTotal", "computeSum")
-3. Run scope-guardian agent to check scope
-```
+MCP servers are invoked by appending "use [server_name]" to requests:
+- ✅ "Check Playwright input.type API docs. use context7"
+- ✅ "Find references to getUserData. use typescript-mcp"
+- ❌ Never use bash commands or function calls for MCP
 
 # OUTPUT FORMAT
 

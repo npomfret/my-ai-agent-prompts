@@ -2,8 +2,9 @@
   "description": "Inventory of available MCP servers and their capabilities",
   "servers": {
     "context7": {
-      "name": "mcp__context7__",
+      "name": "context7",
       "purpose": "Fetch up-to-date, version-specific documentation for libraries and APIs",
+      "auto_discovery": "MCP server with self-discovering functions - let Claude Code discover available tools automatically",
       "capabilities": [
         "Retrieve current documentation directly from source libraries",
         "Provide accurate, version-specific code examples",
