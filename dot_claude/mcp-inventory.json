@@ -3,109 +3,128 @@
   "servers": {
     "context7": {
       "name": "mcp__context7__",
-      "purpose": "General code context search and analysis",
+      "purpose": "Fetch up-to-date, version-specific documentation for libraries and APIs",
       "capabilities": [
-        "Search across entire codebase",
-        "Find code patterns and implementations",
-        "Analyze dependencies and relationships",
-        "Broad context understanding"
+        "Retrieve current documentation directly from source libraries",
+        "Provide accurate, version-specific code examples",
+        "Access real-time API documentation",
+        "Eliminate outdated or hallucinated code examples"
       ],
       "trigger_keywords": [
-        "search", "find", "locate", "where is", "context", "codebase",
-        "implementation", "usage", "references", "dependencies"
+        "api docs", "documentation", "library docs", "official docs",
+        "api reference", "how to use", "latest version", "current docs",
+        "package docs", "framework docs"
       ],
       "common_uses": [
-        "Finding where functions are defined or used",
-        "Understanding code relationships",
-        "Locating specific implementations",
-        "Analyzing code patterns"
+        "Getting current API documentation for libraries",
+        "Finding version-specific code examples",
+        "Checking deprecated methods and alternatives",
+        "Understanding library usage patterns"
       ]
     },
     "typescript-mcp": {
       "name": "mcp__typescript-mcp__",
-      "purpose": "TypeScript/JavaScript AST analysis",
+      "purpose": "TypeScript/JavaScript LSP-based analysis and refactoring",
       "capabilities": [
-        "Abstract Syntax Tree analysis",
-        "Type information extraction",
-        "Code structure analysis",
-        "Pattern matching at AST level"
+        "find_references - Find all references to symbols",
+        "get_diagnostics - Get TypeScript errors and warnings",
+        "rename_symbol - Rename symbols across codebase",
+        "get_definitions - Get symbol definitions",
+        "get_type_at_symbol - Get type information",
+        "get_module_symbols - List module symbols",
+        "move_file - Move files with import updates",
+        "delete_symbol - Delete symbols and references"
       ],
       "trigger_keywords": [
-        "typescript", "javascript", "ast", "types", "interfaces",
-        "components", "react", "performance", "bundle", "syntax"
+        "typescript", "javascript", "references", "diagnostics", "errors",
+        "type errors", "rename", "definitions", "symbols", "imports"
       ],
       "common_uses": [
-        "Analyzing React component performance",
-        "Finding type definitions",
-        "Understanding code structure",
-        "Refactoring TypeScript code"
+        "Finding all references to a function or variable",
+        "Getting TypeScript error diagnostics",
+        "Renaming symbols with automatic updates",
+        "Understanding type information",
+        "Moving files while updating imports"
       ]
     },
     "ts-morph": {
       "name": "mcp__ts-morph__",
-      "purpose": "TypeScript code manipulation and refactoring",
+      "purpose": "TypeScript AST-based refactoring using ts-morph",
       "capabilities": [
-        "Automated refactoring",
-        "Code transformation",
-        "Type-safe code modifications",
-        "Bulk code changes"
+        "rename_symbol - Global symbol renaming",
+        "move_symbol_to_file_by_tsmorph - Move symbols between files",
+        "File/folder renaming with import updates",
+        "Find references to symbols",
+        "Remove path aliases - Convert aliases to relative paths",
+        "AST-based code transformations"
       ],
       "trigger_keywords": [
-        "refactor", "rename", "move", "extract", "transform",
-        "modify", "update", "change", "restructure"
+        "refactor", "rename", "move symbol", "extract", "transform",
+        "restructure", "ast", "path aliases", "move to file"
       ],
       "common_uses": [
-        "Renaming variables/functions across files",
-        "Extracting methods or components",
-        "Moving code between files",
-        "Automated code transformations"
+        "Renaming symbols globally across project",
+        "Moving functions/classes to different files",
+        "Renaming files/folders with import updates",
+        "Converting path aliases to relative imports",
+        "Complex AST-based refactoring"
       ]
     },
     "context-provider": {
       "name": "mcp__context-provider__",
-      "purpose": "Enhanced code context and documentation",
+      "purpose": "Code context analysis and directory structure extraction",
       "capabilities": [
-        "Provide code context",
-        "Documentation extraction",
-        "API understanding",
-        "Code explanation"
+        "Extract directory structures",
+        "Analyze code symbols using Tree-sitter parsers",
+        "Provide code context for AI assistants",
+        "WebAssembly-based parsing (zero native dependencies)",
+        "Code structure understanding"
       ],
       "trigger_keywords": [
-        "explain", "understand", "document", "api", "context",
-        "how does", "what does", "documentation"
+        "directory structure", "code context", "symbols", "project structure",
+        "tree-sitter", "code analysis", "file structure"
       ],
       "common_uses": [
-        "Understanding complex code sections",
-        "Getting API documentation",
-        "Explaining code behavior",
-        "Providing implementation context"
+        "Understanding project structure",
+        "Extracting code symbols and relationships",
+        "Providing context for code analysis",
+        "Analyzing codebase organization"
       ]
     },
     "playwright": {
       "name": "mcp__playwright__",
-      "purpose": "Browser automation and testing",
+      "purpose": "Browser automation and E2E test generation",
       "capabilities": [
-        "Browser automation",
-        "E2E test creation",
-        "Web scraping",
-        "UI interaction testing"
+        "navigate - Navigate to URLs with viewport configuration",
+        "click - Click elements using CSS selectors",
+        "click_in_iframe - Click elements within iframes",
+        "screenshot - Capture page or element screenshots",
+        "start_codegen/end_codegen - Record and generate tests",
+        "get_page_text/html - Extract page content",
+        "fill_in_iframe - Fill forms in iframes",
+        "hover/drag - Mouse interactions",
+        "press_key - Keyboard interactions",
+        "wait_for_response - HTTP response validation",
+        "save_as_pdf - Export pages as PDFs"
       ],
       "trigger_keywords": [
-        "browser", "e2e", "end-to-end", "ui test", "automation",
-        "playwright", "selenium", "web test", "click", "navigate"
+        "browser", "e2e", "end-to-end", "playwright", "test generation",
+        "navigate", "click", "screenshot", "codegen", "automation"
       ],
       "common_uses": [
-        "Creating E2E tests",
-        "Automating browser interactions",
-        "Testing user workflows",
-        "Web scraping tasks"
+        "Generating E2E tests automatically",
+        "Browser automation and navigation",
+        "Capturing screenshots and PDFs",
+        "Testing user interactions",
+        "Recording test scenarios",
+        "Validating HTTP responses"
       ]
     },
     "ide": {
       "name": "mcp__ide__",
       "purpose": "IDE diagnostics and integration",
       "capabilities": [
-        "Get diagnostics/errors",
+        "getDiagnostics - Get diagnostics/errors for files",
         "Linting information",
         "Type checking results",
         "IDE state information"

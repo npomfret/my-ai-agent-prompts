@@ -60,61 +60,60 @@ Check availability:
 □ Identify optimal server methods
 ```
 
-## 4. Tool Selection Matrix
+## 4. Dynamic Tool Selection
 
-### For SEARCH tasks:
+### Tool Selection Protocol
 ```
-IF searching across codebase:
-  → USE: mcp__context7__search
-  → FALLBACK: Grep tool with appropriate patterns
-  
-IF searching in specific files:
-  → USE: mcp__typescript-mcp__find_references (for TS/JS)
-  → FALLBACK: Read + Grep combination
-```
-
-### For ANALYSIS tasks:
-```
-IF analyzing TypeScript/JavaScript:
-  → USE: mcp__typescript-mcp__get_diagnostics
-  → USE: mcp__typescript-mcp__analyze_performance
-  → FALLBACK: Read + manual analysis
-
-IF understanding code context:
-  → USE: mcp__context-provider__get_code_context
-  → FALLBACK: Multiple Read operations
+1. Read mcp-inventory.json for available MCP servers
+2. Read agent-inventory.json for available agents
+3. Match request against:
+   - MCP server trigger_keywords
+   - MCP server common_uses
+   - Agent trigger_keywords
+4. Select optimal tools based on matches
+5. Use built-in tools as fallback
 ```
 
-### For REFACTORING tasks:
-```
-IF refactoring TypeScript:
-  → USE: mcp__ts-morph__* methods
-  → FALLBACK: Edit/MultiEdit tools
-
-IF renaming across files:
-  → USE: mcp__ts-morph__rename_symbol
-  → FALLBACK: Grep + MultiEdit
-```
-
-### For TESTING tasks:
-```
-IF browser/E2E testing:
-  → USE: mcp__playwright__* methods
-  → FALLBACK: Direct playwright commands
-
-IF checking test status:
-  → USE: test-guardian agent
-  → FALLBACK: Bash test commands
+### MCP Server Matching Logic
+```python
+# Dynamic matching based on inventory data
+def select_mcp_servers(request, mcp_inventory):
+    matches = []
+    for server_name, server_data in mcp_inventory["servers"].items():
+        # Check trigger keywords
+        if any(keyword in request.lower() for keyword in server_data["trigger_keywords"]):
+            matches.append((server_name, "keyword_match"))
+        
+        # Check common uses
+        for use_case in server_data["common_uses"]:
+            if use_case_matches(request, use_case):
+                matches.append((server_name, "use_case_match"))
+    
+    return prioritize_matches(matches)
 ```
 
-### For IMPLEMENTATION tasks:
+### Agent Selection Logic
+```python
+# Dynamic agent selection based on inventory
+def select_agents(request, agent_inventory):
+    required_agents = []
+    for agent_name, agent_data in agent_inventory["agents"].items():
+        if any(keyword in request.lower() for keyword in agent_data["trigger_keywords"]):
+            required_agents.append({
+                "name": agent_name,
+                "type": agent_data["type"],
+                "order": agent_data.get("order", "flexible")
+            })
+    
+    return order_agents(required_agents)
 ```
-MINIMAL APPROACH:
-  1. Use architect-advisor ONLY if architecture is genuinely complex
-  2. Implement ONLY what was requested
-  3. scope-guardian ONLY if code was written
-  4. NO automatic test running unless requested
-  5. NO auditor unless committing
+
+### Fallback Strategy
+```
+When no MCP server matches:
+1. Use built-in tools (Grep, Read, Edit, MultiEdit, etc.)
+2. Leverage specialized agents for complex workflows
+3. Report which MCP servers would have been optimal if available
 ```
 
 ## 5. Execution Strategy
@@ -135,18 +134,27 @@ if first_invocation_in_session:
     context = mcp__context-provider__get_code_context()
     mcp_config = read(".mcp.json")
     agent_inventory = read(".claude/agent-inventory.json")
+    mcp_inventory = read(".claude/mcp-inventory.json")
 ```
 
 ### Phase 2: Route
 ```python
-# Pseudo-code for routing
-task_type = analyze_request(user_request)
-available_tools = get_available_mcp_servers()
-
-if task_type in available_tools:
-    execute_with_mcp(task_type, user_request)
-else:
-    execute_with_fallback(task_type, user_request)
+# Dynamic routing based on inventory data
+def route_request(user_request, mcp_inventory, agent_inventory):
+    # Match against MCP servers
+    matched_mcp_servers = select_mcp_servers(user_request, mcp_inventory)
+    
+    # Match against agents
+    matched_agents = select_agents(user_request, agent_inventory)
+    
+    # Check workflow patterns
+    workflow = detect_workflow_pattern(user_request, agent_inventory["workflow_patterns"])
+    
+    # Execute with optimal combination
+    if matched_mcp_servers:
+        execute_with_mcp(matched_mcp_servers, matched_agents, user_request)
+    else:
+        execute_with_fallback(matched_agents, user_request)
 ```
 
 ### Phase 3: Execute
@@ -160,30 +168,8 @@ for selected_tool in optimal_tools:
 
 # MCP SERVER REFERENCE
 
-## context7
-- **Search**: `mcp__context7__search` - Full codebase search
-- **Context**: `mcp__context7__get_context` - Get surrounding code
-- **References**: `mcp__context7__find_references` - Find usages
-
-## typescript-mcp  
-- **Diagnostics**: `mcp__typescript-mcp__get_diagnostics` - Type errors
-- **References**: `mcp__typescript-mcp__find_references` - TS-aware search
-- **Performance**: `mcp__typescript-mcp__analyze_performance` - Perf analysis
-
-## ts-morph
-- **Rename**: `mcp__ts-morph__rename_symbol` - Rename across files
-- **Extract**: `mcp__ts-morph__extract_function` - Extract methods
-- **Move**: `mcp__ts-morph__move_declaration` - Move code
-
-## context-provider
-- **Context**: `mcp__context-provider__get_code_context` - Project understanding
-- **Explain**: `mcp__context-provider__explain_code` - Code explanation
-
-## playwright
-- **Browser**: `mcp__playwright__launch_browser` - Start browser
-- **Navigate**: `mcp__playwright__navigate` - Go to URL
-- **Click**: `mcp__playwright__click` - Click elements
-- **Test**: `mcp__playwright__run_test` - Execute E2E tests
+The available MCP servers and their capabilities are defined in `.claude/mcp-inventory.json`.
+To see current MCP server documentation, refer to that file or use the `/mcp-list` command.
 
 # EXECUTION EXAMPLES
 
@@ -192,9 +178,10 @@ for selected_tool in optimal_tools:
 User: "Find all uses of useState in components"
 
 EXECUTION:
-1. Detect: Search task for React hooks
-2. Select: mcp__context7__search("useState", {path: "components"})
-3. Fallback: Grep("useState", "components/**/*.{tsx,jsx}")
+1. Load mcp-inventory.json and agent-inventory.json
+2. Match keywords: "find", "uses" → triggers search-related MCP servers
+3. Select MCP server with "references" capability (if available)
+4. Fallback: Grep("useState", "components/**/*.{tsx,jsx}")
 ```
 
 ## Example 2: Refactoring Request
@@ -202,22 +189,36 @@ EXECUTION:
 User: "Rename getUserData to fetchUserProfile"
 
 EXECUTION:
-1. Detect: Rename refactoring task
-2. Select: mcp__ts-morph__rename_symbol("getUserData", "fetchUserProfile")
-3. Validate: scope-guardian agent
+1. Load inventories
+2. Match keywords: "rename" → triggers refactoring MCP servers
+3. Select MCP server with "rename_symbol" capability
+4. Validate with agents matching "scope" keywords
 ```
 
-## Example 3: New Feature
+## Example 3: API Documentation Request
+```
+User: "Check the official API docs for Playwright input.type deprecation"
+
+EXECUTION:
+1. Load inventories
+2. Match keywords: "api docs", "documentation" → triggers doc MCP servers
+3. Select MCP server matching "library docs" use case
+4. Fallback: WebFetch for official documentation
+```
+
+## Example 4: New Feature
 ```
 User: "Add dark mode toggle to settings"
 
 EXECUTION:
-1. architect-advisor agent (MANDATORY)
-2. mcp__context-provider__get_code_context("settings")
-3. Implement with Edit/Write tools
-4. scope-guardian agent (MANDATORY)
-5. test-runner agent
-6. auditor agent
+1. Load inventories
+2. Match keywords: "add", "feature" → triggers planning agents
+3. Execute workflow_patterns["new_feature"] from agent-inventory.json:
+   - architect-advisor (planning)
+   - implementation
+   - parallel quality checks
+   - test-runner
+   - auditor
 ```
 
 # FALLBACK STRATEGY
