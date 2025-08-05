@@ -109,42 +109,31 @@ EOF
 echo -e "\n${BLUE}Setting up .mcp.json...${NC}"
 setup_mcp_json
 
-# Copy MCP inventory file if it doesn't exist
+# Symlink MCP inventory file
 setup_mcp_inventory() {
-    local inventory_file=".claude/mcp-inventory.json"
+    local source_inventory="$SCRIPT_BASE_DIR/dot_claude/mcp-inventory.json"
+    local target_inventory=".claude/mcp-inventory.json"
     
-    if [ ! -f "$inventory_file" ]; then
-        mkdir -p ".claude"
-        cp "$SCRIPT_BASE_DIR/dot_claude/mcp-inventory.json" "$inventory_file"
-        echo -e "${GREEN}  ✓ Created MCP inventory file${NC}"
-    else
-        echo -e "${BLUE}  MCP inventory file already exists${NC}"
-    fi
+    mkdir -p ".claude"
+    create_symlink "$source_inventory" "$target_inventory" "mcp-inventory.json"
 }
 
 # Setup MCP inventory
 echo -e "\n${BLUE}Setting up MCP inventory...${NC}"
 setup_mcp_inventory
 
-# Update .gitignore with .mcp.local.json
+# Update .gitignore with .mcp.local.json and mcp-inventory.json symlink
 echo -e "\n${BLUE}Updating .gitignore...${NC}"
-update_gitignore_patterns ".mcp.local.json"
-echo -e "${GREEN}  ✓ Added .mcp.local.json to .gitignore${NC}"
+update_gitignore_patterns ".mcp.local.json" ".claude/mcp-inventory.json"
+echo -e "${GREEN}  ✓ Added .mcp.local.json and .claude/mcp-inventory.json to .gitignore${NC}"
 
-# Add MCP files to git
+# Add MCP files to git (only .mcp.json, not the inventory symlink)
 echo -e "\n${BLUE}Adding MCP files to git...${NC}"
 if git rev-parse --git-dir > /dev/null 2>&1; then
-    files_to_add=(
-        ".mcp.json"
-        ".claude/mcp-inventory.json"
-    )
-    
-    for file in "${files_to_add[@]}"; do
-        if [ -f "$file" ] && ! git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
-            git add "$file"
-            echo -e "${GREEN}  ✓ Added $file to git${NC}"
-        fi
-    done
+    if [ -f ".mcp.json" ] && ! git ls-files --error-unmatch ".mcp.json" >/dev/null 2>&1; then
+        git add ".mcp.json"
+        echo -e "${GREEN}  ✓ Added .mcp.json to git${NC}"
+    fi
 else
     echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
 fi

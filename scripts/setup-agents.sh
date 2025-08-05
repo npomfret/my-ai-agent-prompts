@@ -59,32 +59,22 @@ if [ ${#patterns[@]} -gt 0 ]; then
     echo -e "${GREEN}  ✓ Added ${#patterns[@]} agent patterns to .gitignore${NC}"
 fi
 
-# Copy agent inventory file if it doesn't exist
+# Also add the inventory symlink to gitignore
+update_gitignore_patterns ".claude/agent-inventory.json"
+
+# Symlink agent inventory file
 setup_agent_inventory() {
-    local inventory_file=".claude/agent-inventory.json"
+    local source_inventory="$SCRIPT_BASE_DIR/dot_claude/agent-inventory.json"
+    local target_inventory=".claude/agent-inventory.json"
     
-    if [ ! -f "$inventory_file" ]; then
-        cp "$SCRIPT_BASE_DIR/dot_claude/agent-inventory.json" "$inventory_file"
-        echo -e "${GREEN}  ✓ Created agent inventory file${NC}"
-    else
-        echo -e "${BLUE}  Agent inventory file already exists${NC}"
-    fi
+    create_symlink "$source_inventory" "$target_inventory" "agent-inventory.json"
 }
 
 # Setup agent inventory
 echo -e "\n${BLUE}Setting up agent inventory...${NC}"
 setup_agent_inventory
 
-# Add agent inventory to git
-echo -e "\n${BLUE}Adding agent inventory to git...${NC}"
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    if [ -f ".claude/agent-inventory.json" ] && ! git ls-files --error-unmatch ".claude/agent-inventory.json" >/dev/null 2>&1; then
-        git add ".claude/agent-inventory.json"
-        echo -e "${GREEN}  ✓ Added .claude/agent-inventory.json to git${NC}"
-    fi
-else
-    echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
-fi
+# Note: agent-inventory.json is now a symlink and is in .gitignore, so we don't add it to git
 
 # List what was set up
 echo -e "\n${BLUE}Linked agents:${NC}"

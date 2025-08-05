@@ -133,8 +133,6 @@ add_files_to_git() {
             "AI_AGENT.md"
             ".mcp.json"
             ".claude/settings.json"
-            ".claude/mcp-inventory.json"
-            ".claude/agent-inventory.json"
         )
         
         local added_files=()
@@ -164,6 +162,7 @@ echo -e "\n${BLUE}Summary:${NC}"
 echo "  - AI_AGENT.md is the source file for both CLAUDE.md and GEMINI.md"
 echo "  - Command symlinks in: .claude/commands/"
 echo "  - Agent symlinks in: .claude/agents/"
+echo "  - Inventory symlinks: .claude/agent-inventory.json, .claude/mcp-inventory.json"
 echo "  - Settings merged into: .claude/settings.json"
 echo "  - MCP servers configured in: .mcp.json"
 echo "  - All symlinks and .mcp.local.json added to .gitignore"
