@@ -14,7 +14,8 @@
       "mcp__ts-morph__*",
       "mcp__context-provider__*",
       "mcp__playwright__*",
-      "mcp__ide__*"
+      "mcp__ide__*",
+      "Task"
     ],
     "deny": []
   }
