@@ -6,6 +6,5 @@ description: Quick optimizer - invokes the powerful meta-prompt agent for intell
 
 **User Request**: $ARGUMENTS
 
-**STRICT SCOPE ENFORCEMENT**: I will do EXACTLY what you asked - nothing more, nothing less. Questions will be answered without taking action.
-
-Use the meta-prompt agent to handle this request with STRICT scope discipline: "$ARGUMENTS"
+Use the Task tool to launch the meta-prompt agent with this prompt:
+"Follow your initialization protocol and handle this request with STRICT scope discipline: $ARGUMENTS"
