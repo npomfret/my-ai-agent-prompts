@@ -118,9 +118,6 @@ We now have specialized subagents that enforce our directives automatically. The
 
 ### Available Agents
 
-#### Meta-Orchestration Agent
-- **workflow-orchestrator**: MUST BE USED FIRST - tells you exactly which agents to use for your current task
-
 #### Core Task Agents
 - **analyst**: Performs comprehensive codebase analysis 
 - **auditor**: Reviews changes and creates commit messages
@@ -256,14 +253,4 @@ Documents all MCP servers with:
 
 This file is automatically copied during setup and serves as the single source of truth for MCP server capabilities.
 
-### Agent Inventory (`.claude/agent-inventory.json`)  
-
-Documents all subagents with:
-- **Type**: Category (meta, planning, analysis, verification, etc.)
-- **Purpose**: What the agent does
-- **When to Use**: Specific triggers and timing
-- **Order**: Execution sequence (e.g., "always_first", "after_code_changes")
-- **Combines**: Which individual agents it wraps
-- **Workflow Patterns**: Predefined sequences for common tasks
-
-These inventory files enable the `/p` command to intelligently match your request with the right tools without you needing to memorize names or capabilities.
+The MCP inventory file enables the `/p2` command to intelligently match your request with the right tools without you needing to memorize names or capabilities.

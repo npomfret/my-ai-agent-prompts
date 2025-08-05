@@ -59,22 +59,6 @@ if [ ${#patterns[@]} -gt 0 ]; then
     echo -e "${GREEN}  ✓ Added ${#patterns[@]} agent patterns to .gitignore${NC}"
 fi
 
-# Also add the inventory symlink to gitignore
-update_gitignore_patterns ".claude/agent-inventory.json"
-
-# Symlink agent inventory file
-setup_agent_inventory() {
-    local source_inventory="$SCRIPT_BASE_DIR/dot_claude/agent-inventory.json"
-    local target_inventory=".claude/agent-inventory.json"
-    
-    create_symlink "$source_inventory" "$target_inventory" "agent-inventory.json"
-}
-
-# Setup agent inventory
-echo -e "\n${BLUE}Setting up agent inventory...${NC}"
-setup_agent_inventory
-
-# Note: agent-inventory.json is now a symlink and is in .gitignore, so we don't add it to git
 
 # List what was set up
 echo -e "\n${BLUE}Linked agents:${NC}"
