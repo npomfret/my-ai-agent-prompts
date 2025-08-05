@@ -1,8 +1,8 @@
 ---
-description: Smart router - asks advisors which tools to use, then executes with MCP servers or agents
+description: Smart prompt - asks advisors which tools to use, then executes with MCP servers or agents
 ---
 
-# P2 Command (Smart Router)
+# P Command (Smart Prompt)
 
 **User Request**: $ARGUMENTS
 
