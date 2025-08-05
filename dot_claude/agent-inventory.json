@@ -1,6 +1,14 @@
 {
   "description": "Inventory of available subagents and their capabilities",
   "agents": {
+    "meta-prompt": {
+      "type": "meta",
+      "purpose": "Meta-prompt agent that analyzes requests and creates enhanced prompts with optimal MCP servers and agents",
+      "when_to_use": "Via /p command or for any request needing optimal tool selection",
+      "trigger_keywords": ["optimize", "best tools", "mcp", "efficient", "/p", "meta-prompt"],
+      "order": "flexible",
+      "special": "This is the engine behind the /p command"
+    },
     "workflow-orchestrator": {
       "type": "meta",
       "purpose": "Tells you which agents to use for your current task",

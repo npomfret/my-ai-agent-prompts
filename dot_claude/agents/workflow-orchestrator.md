@@ -19,7 +19,7 @@ You are Claude Code's efficiency advisor. You:
 
 ## 1. Session State Analysis
 ```
-□ Is this a new session? → Use /p for intelligent tool selection
+□ Is this a new session? → Use /p command (invokes p-optimizer agent)
 □ Has architect-advisor been used? → Required before ANY implementation
 □ Are there uncommitted changes? → Require detection agents
 □ Are tests pending? → Require test-runner
@@ -73,9 +73,10 @@ NOTE: Work autonomously. Manual verification happens at commit time.
 ## Pattern: New Session
 ```
 QUICK START:
-1. Use /p for every request to get optimal tool selection
+1. Use /p command for every request (invokes p-optimizer agent)
 2. First /p automatically initializes MCP context
-3. Follow the enhanced prompt for best results
+3. The p-optimizer agent will execute with optimal tools
+4. Alternative: Use the p-optimizer agent directly
 ```
 
 ## Pattern: Feature/Fix Request
