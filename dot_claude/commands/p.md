@@ -1,39 +1,51 @@
 ---
-description: Smart prompt - asks advisors which tools to use, then executes with MCP servers or agents
+description: Smart prompt - unified advisor selects appropriate MCP servers or agents, then executes
 ---
 
 # P Command (Smart Prompt)
 
 **User Request**: $ARGUMENTS
 
-First, use the Task tool to ask the MCP advisor:
+## Check if prompt is context-dependent
+
+If $ARGUMENTS contains vague references like "that", "it", "the thing", "what we discussed", "as mentioned", etc.:
+- The prompt likely refers to previous conversation context
+- Summarize the relevant context from our conversation into a self-contained description
+- Create an enriched prompt that combines: "[Context: specific description of what we're discussing] + $ARGUMENTS"
+- Use this enriched prompt instead of raw $ARGUMENTS when calling the advisor
+
+Otherwise, if the prompt is self-contained and specific:
+- Use $ARGUMENTS directly
+
+## Call the prompt advisor
+
+Use the Task tool to ask the unified prompt advisor:
+```
 Task(
-    description="Check MCP servers",
-    prompt="$ARGUMENTS",
-    subagent_type="mcp-advisor"
+    description="Analyze prompt",
+    prompt="[enriched_prompt or $ARGUMENTS as determined above]",
+    subagent_type="prompt-advisor"
 )
+```
 
-Based on the MCP advisor's response:
-- If it returns MCP server names (not "none"), use each suggested MCP server by saying what you're doing then adding the trigger (e.g., "I'll check the API documentation. use context7")
-- If it returns "none", proceed to ask the agent advisor
+Print the advisor's response so you can see what tools were selected:
+    "Prompt advisor output: [advisor's response]"
 
-If the MCP advisor returned "none", use the Task tool to ask the agent advisor:
-Task(
-    description="Check agents",
-    prompt="$ARGUMENTS",
-    subagent_type="agent-advisor"
-)
+Based on the advisor's response:
 
-Based on the agent advisor's response:
-- If it returns agent names (not "none"), for each agent name returned:
-  - Use the Task tool to invoke that specific agent with the original user request
-  - Example: If advisor returns "auditor", then:
-    Task(
-        description="Review changes", 
-        prompt="$ARGUMENTS",
-        subagent_type="auditor"
-    )
-  - If multiple agents are returned (e.g., "code-quality-enforcer, auditor"), invoke each one separately
-- If it returns "none", handle the request directly using built-in tools
+1. **If response starts with "mcp:"**
+   - Extract the MCP server names after the colon
+   - For each MCP server, trigger it by saying what you're doing then adding the trigger
+   - Example: "I'll check the API documentation. use context7"
 
-Remember: Always check MCP servers first (they're faster), then agents, then fallback to built-in tools.
+2. **If response starts with "agents:"**
+   - Extract the agent names after the colon
+   - For each agent name, use the Task tool to invoke that agent with the original request
+   - Example: If advisor returns "agents: auditor, code-quality-enforcer", then invoke:
+     Task(description="Review code", prompt="$ARGUMENTS", subagent_type="auditor")
+     Task(description="Check quality", prompt="$ARGUMENTS", subagent_type="code-quality-enforcer")
+
+3. **If response is "none"**
+   - This might mean no tools match OR the prompt was too vague
+   - If the original prompt was context-dependent, handle it directly with full conversation context
+   - Otherwise, handle the request directly using built-in tools
