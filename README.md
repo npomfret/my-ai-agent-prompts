@@ -1,256 +1,101 @@
-# my-ai-agent-prompts
+# AI Agent Prompt Framework
 
-For Claude Code and Gemini Cli (kind of).
+This project provides some useful tools for enhancing AI assistants like Claude Code CLI and Gemini CLI, transforming them into highly effective software engineering partners. It shifts from simple prompt-and-response to a structured, tool-driven workflow that enforces best practices and automates complex tasks.
 
-## Project Setup
+At its core, this repository offers a collection of scripts, configurations, and predefined "agents" that you can easily integrate into your own projects. These components work together to create a more disciplined and capable AI development environment.
 
-Use the modular setup scripts in the `scripts/` directory to configure a new project with AI agent prompts:
+## Core Concepts
 
-```shell
-# Complete setup (from within your target project)
-../my-ai-agent-prompts/scripts/setup-all.sh
-```
+This framework is built on three key concepts:
 
-```shell
-# Or specify a target directory
-./scripts/setup-all.sh /path/to/target/project
-```
+1.  **MCP (Model Context Protocol):** A standardized way for the AI to connect with external tools and data sources. This project pre-configures several powerful MCP servers for tasks like live code analysis (`typescript-mcp`), documentation lookup (`context7`), and automated refactoring (`ts-morph`). This gives the AI real-time access to your codebase and external knowledge, reducing errors and hallucinations.
 
-```shell
-# Individual setup scripts (optional)
-./scripts/setup-commands.sh [path]  # Only set up command symlinks
-./scripts/setup-agents.sh [path]    # Only set up agent symlinks  
-./scripts/setup-mcp.sh [path]       # Only set up MCP configuration
-```
+2.  **Specialized Subagents:** A team of AI "experts" defined in `.claude/agents/`. Each agent has a specific role and a strict set of instructions, such as:
+    *   `architect-advisor`: Analyzes the codebase to determine the *best place* to make changes.
+    *   `test-guardian`: Runs tests, enforces quality, and cleans up failing or skipped tests.
+    *   `scope-guardian`: Ensures the AI does *exactly* what you asked for, preventing feature creep.
+    *   `anti-pattern-detector`: Scans for bad coding practices like fallbacks, hacks, and error suppression.
 
-The `setup-all.sh` script automatically:
-- Creates `AI_AGENT.md` if it doesn't exist (from template or basic version)
-- Symlinks `CLAUDE.md` and `GEMINI.md` to `AI_AGENT.md` for shared configuration
-- Syncs all command files to `.claude/commands/`
-- Syncs all agent files to `.claude/agents/`
-- Merges `.claude/settings.json` permissions
-- Sets up `.mcp.json` with default MCP servers (checked into git)
-- Updates `.gitignore` with all symlinked paths and `.mcp.local.json`
-- Handles additions/removals - safe to re-run anytime
+3.  **The `/p` Meta-Prompt:** The heart of the workflow. Instead of trying to remember the right tools or agents for a task, you simply prefix your request with `/p`. This command analyzes your intent and automatically selects the optimal combination of MCP servers and agents to execute your request efficiently and safely.
 
-### MCP Configuration
+By combining these elements, this project transforms your AI assistant from a simple chatbot into a disciplined, context-aware, and tool-equipped engineering assistant.
 
-- `.mcp.json` - Team-shared MCP server configuration (committed to git)
-- `.mcp.local.json` - Personal MCP additions like API keys (gitignored)
+## Getting Started
 
-Claude Code automatically merges both files when loading MCP servers.
+You can set up a new or existing project with this framework by running a single script.
 
-This agent-based approach is much more effective than traditional CLAUDE.md instructions because it transforms principles into explicit tool invocations that are harder to ignore.
-
-## 🚀 Quick Start: The Workflow
-
-### After Setup
-
-Once you've run `setup-all.sh` and started a new Claude Code session, here's your workflow:
-
-### 1. **Start Every Request with `/p` (`p` for prompt) **
-
-```
-/p analyze performance issues in my app
-/p fix the bug in user authentication  
-/p add a new feature for dark mode
-```
-
-The `/p` command automatically:
-- Analyzes your intent
-- Selects the best MCP servers and subagents
-- **Immediately executes your request** with optimal tools
-- Handles session initialization on first use
-- Shows you which tools were selected so you learn
-
-### 2. **First `/p` Command Initializes the Session**
-
-The first time you use `/p` in a session, it will:
-- Use `mcp__context-provider__get_code_context` to understand your project
-- Note available MCP servers from `.mcp.json`
-- Set MCP-first working mode
-- Configure the session for optimal tool usage
-
-### 3. **How It Works**
-
-Every time you use `/p`, it will:
-- Analyze your request for keywords and intent
-- Select the optimal MCP servers and subagents
-- **Automatically execute your request** using the selected tools
-- Show you which tools were chosen so you learn the system
-
-### 4. **Helper Commands Available**
-
-- `/mcp-list` - See all MCP servers and their capabilities
-- `/agent-list` - See all subagents organized by type
-- `/fix` - Find one thing to improve in the codebase
-
-### Example Workflow:
-
-```
-# Session start
-/p understand this React application
-
-# Bug fix  
-/p fix issue #123 with login timeout
-
-# New feature
-/p add export functionality to user dashboard
-
-# Analysis
-/p find all performance bottlenecks
-```
-
-The key is: **always start with `/p`** - it handles everything else automatically.
-
-As a general approach, I create a `docs/tasks` directory in the root of every project.  Form here I add subdirectories, or not, as needed, and write all my bug reports, feature planning, refactorings as `.md` files. 
-
-### Update cli tools
+From within your project's root directory, run:
 
 ```shell
-npm install -g @anthropic-ai/claude-code
-npm install -g @google/gemini-cli
+# Execute the setup script from your clone of this repository
+cd path/to/my/project
+/path/to/my-ai-agent-prompts/scripts/setup-all.sh .
 ```
 
-## Claude Code Subagents
+This command will:
+-   Create a central `AI_AGENT.md` configuration file.
+-   Symlink `CLAUDE.md` and `GEMINI.md` to `AI_AGENT.md`.
+-   Create a `.claude` directory and symlink all the predefined **commands** and **agents**.
+-   Configure shared **MCP servers** in `.mcp.json`.
+-   Update your `.gitignore` to exclude temporary files and local configurations.
 
-We now have specialized subagents that enforce our directives automatically. These agents transform oft-ignored principles into enforced gates.
+The setup is idempotent and safe to re-run at any time to sync the latest changes.
 
-### Available Agents
+## The Workflow
 
-#### Core Task Agents
-- **analyst**: Performs comprehensive codebase analysis 
-- **auditor**: Reviews changes and creates commit messages
-- **architect-advisor**: Analyzes system architecture and data flows to advise WHERE changes should be made
-- **test-cleanup**: Enforces proper test cleanup - tests must be FIXED or DELETED, never skipped
+Your development workflow becomes simple and powerful.
 
-#### Enforcement Agents  
-- **test-runner**: Actually runs tests and waits for completion (prevents false "tests passed" claims)
-- **no-fallback-detector**: Detects any fallback patterns (enforces the "NEVER use fallbacks" rule)
-- **style-enforcer**: Enforces coding style and patterns
-- **engineering-guardian**: Comprehensive check of all engineering principles
+### Always Start with `/p`
 
-#### Fine-Grained Detection Agents (Read-Only)
-- **comment-detector**: Finds code comments (forbidden except truly exceptional cases)
-- **scope-creep-detector**: Catches when changes exceed requested scope
-- **hack-detector**: Identifies dirty hacks disguised as "simple solutions"
-- **pwd-checker**: Ensures pwd is run before shell commands
-- **duplicate-detector**: Finds code duplication and copy-paste patterns
-- **error-suppressor-detector**: Catches try/catch/log anti-patterns
-- **backwards-compat-detector**: Finds any backward compatibility code
-- **test-for-future-detector**: Detects tests for non-existent features
-- **build-system-analyzer**: Deep dives into build systems to understand compilation, testing, deployment
-
-### Usage Patterns
-
-#### Manual Invocation
-```
-Use the analyst subagent to analyze this codebase
-Use the test-runner subagent to run all tests
-Use the no-fallback-detector to check my recent changes
-```
-
-#### Automatic Triggers
-Agents can be triggered automatically based on their descriptions:
-- `test-runner` - "Use proactively after any code changes"
-- `no-fallback-detector` - "Use after any code changes"
-- `style-enforcer` - "Reviews code changes for style violations"
-
-#### Recommended Workflow
-
-For New Features/Fixes:
-1. Use `architect-advisor` to analyze WHERE to make changes
-2. Make code changes based on architectural guidance
-3. Claude automatically runs detection agents in parallel:
-   - `scope-creep-detector` (did we do only what was asked?)
-   - `comment-detector` (any forbidden comments?)
-   - `hack-detector` (any dirty hacks?)
-   - `duplicate-detector` (any copy-paste?)
-   - `no-fallback-detector` (any fallbacks?)
-   - `error-suppressor-detector` (any try/catch/log?)
-   - `backwards-compat-detector` (any legacy support?)
-4. Claude runs: `style-enforcer`, `engineering-guardian`
-5. Claude runs: `test-runner` (with pwd-checker first)
-6. If all pass, run: `auditor` for commit message
-7. Fix any violations before proceeding
-
-#### Quick Detection Commands
-```
-# Run all detectors on recent changes
-Use the scope-creep-detector, comment-detector, hack-detector, and duplicate-detector agents
-
-# Check for common mistakes
-Use the no-fallback-detector and error-suppressor-detector agents
-
-# Verify test quality
-Use the test-for-future-detector and then test-runner agents
-```
-
-### Benefits Over Previous Approach
-- **Impossible to ignore**: Each agent's entire purpose is enforcement
-- **Parallel checking**: Multiple agents can validate simultaneously  
-- **Fresh perspective**: Each agent has its own context window
-- **Clear accountability**: One agent, one responsibility
-
-### Migration Notes
-- Existing commands and directives remain in place during transition
-- Agents have their own context windows (100k tokens each)
-- Agents cannot modify directive files (immutable principles)
-- All agents report pass/fail with specific details
-
-## Meta-Prompt System
-
-The `/p` command provides intelligent prompt enhancement by automatically analyzing your request and suggesting relevant MCP servers and subagents.
-
-### How It Works
-
-Instead of remembering which tools to use, simply prefix your prompt with `/p`:
+Prefix every request to your AI assistant with `/p` (`p` for "prompt").
 
 ```
-/p analyze performance issues in my React app
+/p fix the login bug in issue #123
+/p refactor the user service to be more efficient
+/p add dark mode to the settings page
+/p analyze the bundle size and suggest optimizations
 ```
 
-The meta-prompt analyzer will:
-1. Analyze your intent
-2. Identify relevant MCP servers (for data/tools)
-3. Suggest appropriate subagents (for enforcement/analysis)
-4. Return an enhanced prompt with optimal tool usage
+The `/p` command automatically analyzes your request, selects the appropriate tools (MCP servers) and experts (subagents), and then executes the task. It removes the cognitive load of remembering tool names and ensures best practices are followed every time.
 
-### Example Enhanced Prompts
+### Example: Fixing a Bug
 
-**Performance Analysis:**
-```
-Original: /p find performance bottlenecks
-Enhanced: "Use architect-advisor to understand app structure. Use mcp__typescript-mcp__ for React analysis and mcp__context7__ for codebase search. Run analyst agent for comprehensive report."
-```
+1.  **Your Prompt:**
+    ```
+    /p fix the TypeError in user.service.ts on line 45
+    ```
 
-**Bug Fix:**
-```
-Original: /p fix login bug #123
-Enhanced: "Start with architect-advisor for auth architecture. Use mcp__context7__ to find login code. After fix, run test-runner and auditor."
-```
+2.  **What Happens Automatically:**
+    *   The `/p` command invokes the `architect-advisor` agent to analyze the codebase and determine the root cause of the error, rather than just patching the symptom.
+    *   It uses the `typescript-mcp` server to get real-time type information and diagnostics from your code.
+    *   Once the fix is implemented, it might use the `test-guardian` to run relevant tests and the `scope-guardian` to ensure no unrelated code was changed.
+    *   Finally, it can use the `auditor` agent to review the changes and draft a commit message.
 
-### Helper Commands
+## Available Tools
 
-- `/mcp-list` - Show all available MCP servers with descriptions
-- `/agent-list` - Show all subagents organized by type
-- `/p [prompt]` - Analyze and enhance your prompt with optimal tools
+This framework comes with a pre-configured set of agents and commands.
 
-The meta-prompt system eliminates cognitive load by automatically selecting and executing the best tools for your task while teaching you the ecosystem through transparent tool selection.
+### Key Subagents
 
-## Inventory System
+-   **`analyst`**: Performs deep codebase analysis to identify areas for improvement.
+-   **`architect-advisor`**: Advises on *where* to make changes for best system design.
+-   **`auditor`**: Reviews final changes and creates commit messages.
+-   **`scope-guardian`**: Prevents scope creep and over-engineering.
+-   **`test-guardian`**: Manages all aspects of testing, from running to cleanup.
+-   **`code-quality-enforcer`**: Detects a wide range of style, syntax, and pattern violations.
 
-The `/p` command relies on two inventory files that document all available tools:
+You can see a full list of agents in the `.claude/agents` directory after setup.
 
-### MCP Inventory (`.claude/mcp-inventory.json`)
+### Key Commands
 
-Documents all MCP servers with:
-- **Name**: How to invoke it (e.g., `mcp__context7__`)
-- **Purpose**: What the server does
-- **Capabilities**: List of specific features
-- **Trigger Keywords**: Words that suggest using this server
-- **Common Uses**: Example scenarios
+-   `/analyse`: Perform a comprehensive analysis of the codebase.
+-   `/fix`: Find and fix the single most impactful issue in the project.
+-   `/changes`: Review the current uncommitted changes and generate a commit message.
+-   `/next-task`: Intelligently select the next task to work on from a `docs/tasks` directory.
 
-This file is automatically copied during setup and serves as the single source of truth for MCP server capabilities.
+## Why Use This Framework?
 
-The MCP inventory file enables the `/p2` command to intelligently match your request with the right tools without you needing to memorize names or capabilities.
+-   **Discipline & Best Practices:** Agents enforce rules that are easy for humans (and AIs) to forget, like "don't commit commented-out code" or "fix tests, don't skip them."
+-   **Efficiency:** The `/p` command and MCP servers automate tedious tasks like looking up documentation, finding function references, or running tests.
+-   **Reduced Errors:** By connecting directly to your codebase with Language Server Protocol (LSP) and other tools, the AI has real-time, accurate context, leading to fewer mistakes.
+-   **Consistency:** The framework ensures that every task, whether it's fixing a bug or adding a feature, follows the same high-quality process.
