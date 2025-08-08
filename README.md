@@ -99,3 +99,11 @@ You can see a full list of agents in the `.claude/agents` directory after setup.
 -   **Efficiency:** The `/p` command and MCP servers automate tedious tasks like looking up documentation, finding function references, or running tests.
 -   **Reduced Errors:** By connecting directly to your codebase with Language Server Protocol (LSP) and other tools, the AI has real-time, accurate context, leading to fewer mistakes.
 -   **Consistency:** The framework ensures that every task, whether it's fixing a bug or adding a feature, follows the same high-quality process.
+
+
+To update:
+
+```shell
+npm install -g @anthropic-ai/claude-code
+npm install -g @google/gemini-cli
+```
