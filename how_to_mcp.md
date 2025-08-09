@@ -36,7 +36,11 @@ Add server definitions to your `.mcp.json` file in the root of your project:
         "-y",
         "code-context-provider-mcp"
       ]
-    }
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y",  "@playwright/mcp@latest"]
+    },
   }
 }
 ```
