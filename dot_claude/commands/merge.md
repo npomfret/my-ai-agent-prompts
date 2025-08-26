@@ -1,131 +1,65 @@
 ---
-description: Intent-aware inbound update with a fast path (FF-only) or explicit rebase onto a single upstream. This version **persists upstream info to files** so each Bash snippet has access (Claude commands don’t share shell state).
-argument-hint: "[optional upstream ref, e.g. origin/main | defaults to @{u} or origin/<HEAD>]"
+description: Minimal, intent-first Claude Code command to update your branch with a linear history. Lets the LLM decide exact Git commands; avoids brittle inline Bash snippets and environment leakage. Auto when possible; asks only if the upstream cannot be inferred. Works best when you pass an explicit upstream ref (e.g. `/merge origin/main`).
+argument-hint: "[optional upstream ref, e.g. origin/main | origin/master | upstream/main]"
 allowed-tools: >
-  Bash(git fetch:*),
-  Bash(git remote:*),
-  Bash(git rev-parse:*),
-  Bash(git rev-list:*),
-  Bash(git diff:*),
-  Bash(git merge:*),
-  Bash(git config:*),
-  Bash(git rebase:*),
-  Bash(git add:*),
-  Bash(git status:*),
-  Bash(git stash:*),
-  Bash(git apply:*),
-  Bash(git log:*),
-  Bash(cat:*),
-  Bash(tee:*),
-  Bash(mkdir:*),
-  Bash(sed:*),
-  Bash(awk:*),
-  Bash(tr:*),
-  Bash(node:*),
-  Bash(pnpm:*),
-  Bash(npm:*),
-  Bash(yarn:*)
+  Bash(git *),
+  Bash(npm *),
+  Bash(pnpm *),
+  Bash(yarn *),
+  Bash(node *)
 ---
 
 # /merge
 
-> **Linear history only** (no merge commits).  
-> Fast path: **fast‑forward** if current `HEAD` is an ancestor of upstream.  
-> Else: **explicit rebase** onto a **single resolved upstream commit**.  
-> Conflicts: resolve with intent inferred from diffs.
+## Mission
+Bring the current branch up to date from a single upstream ref **without creating merge commits**, preferring **fast-forward** and otherwise performing a **rebase**. If conflicts arise, resolve them **intent‑first** using inbound diffs and keep changes minimal.
 
----
+## Operating principles for the assistant
+- Prefer **rebase** over merge; keep history linear.
+- Do **not** rely on previously defined shell variables or state persisting between tool calls. Every `Bash(...)` command you run must be **self‑contained** with explicit values.
+- If upstream is ambiguous and cannot be inferred safely, ask the user exactly once: “Which upstream? (e.g. origin/main)”. Otherwise proceed automatically.
+- Never use interactive TUIs (no `-i`). Never run `git pull` (construct explicit `fetch`, `merge --ff-only`, or `rebase` commands instead).
+- If the working tree has unrelated local changes, auto‑stash before rebase and pop afterward.
+- Use `merge.conflictStyle=diff3` and enable `rerere` to speed repeat resolutions.
 
-## 0) Preflight & Upstream Resolution (persist to files)
+## Plan (what to do)
+1) **Detect upstream** (call it `UP`):
+   - If the user provided an argument, use it verbatim (e.g., `origin/main`).
+   - Else try, in order:
+     a) `git rev-parse --abbrev-ref --symbolic-full-name @{u}` (tracking branch)  
+     b) default branch from `git remote show origin` (HEAD branch), with `origin/<HEAD>`  
+     c) fallbacks: try `origin/main`, then `origin/master` if they exist
+   - If none resolves, ask the user for the ref.
 
-- Refuse if in a detached HEAD:
-  !`if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then echo "Detached HEAD — switch to a branch first."; exit 1; fi`
+2) **Preflight**
+   - Ensure not in detached HEAD.
+   - If repository is shallow, unshallow (`git fetch --unshallow`).
+   - Enable: `git config rerere.enabled true` and `git config merge.conflictStyle diff3`.
+   - `git fetch --prune <remote-for-UP>`.
 
-- Ensure repo isn’t shallow (rebase needs history):
-  !`if git rev-parse --is-shallow-repository | grep -q true; then git fetch --unshallow --quiet; fi`
+3) **Update**
+   - If `git merge-base --is-ancestor HEAD <UP>` is true → run `git merge --ff-only <UP>` (fast‑forward).
+   - Else → run `git rebase --autostash <UP>`.
 
-- Resolve a **single** upstream ref and its **commit SHA**, then persist:
-  !`mkdir -p .git && : > .git/merge_up_ref && : > .git/merge_up_sha`
-  !`cand="$ARGUMENTS";`
-  !`if [ -z "$cand" ]; then cand=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true); fi`
-  !`if [ -z "$cand" ]; then headbr=$(git remote show origin 2>/dev/null | sed -n 's/.*HEAD branch: //p'); cand="origin/${headbr:-main}"; fi`
-  !`sha=$(git rev-parse --verify -q "${cand}^{commit}") || { echo "Cannot resolve upstream: $cand"; exit 1; }`
-  !`printf "%s" "$cand" > .git/merge_up_ref && printf "%s" "$sha" > .git/merge_up_sha && echo "Upstream: $cand @ $sha"`
+4) **On conflicts (intent‑aware)**
+   - List conflicts: `git diff --name-only --diff-filter=U`.
+   - For each conflicted file, inspect base/ours/theirs (`git show :1:FILE`, `:2:FILE`, `:3:FILE`), plus inbound diffs for the file from `<UP>`.
+   - Infer the **intent** of inbound changes (bugfix, refactor, API change, feature, tests, config) from the actual diff.
+   - Apply minimal edits to preserve behavior while adopting upstream contracts (APIs/types/renames). Avoid formatting churn.
+   - Stage fixes (`git add FILE`) and continue (`git rebase --continue`). Repeat until clean.
 
-- Fetch (blobless for speed):
-  !`git fetch --prune --quiet --filter=blob:none --recurse-submodules=no`
+5) **Post‑checks**
+   - If dependency or lockfiles changed, run a quick install (`pnpm install --ignore-scripts` | `npm ci` | `yarn install`).
+   - If `tsconfig.json` exists, run `npx tsc --noEmit` and surface any actionable errors.
+   - If we auto‑stashed, `git stash pop` and resolve trivial aftershocks similarly.
+   - Suggest `git push --force-with-lease` if branch was previously pushed.
 
-- Enable rerere & diff3 markers:
-  !`git config rerere.enabled true`
-  !`git config merge.conflictStyle diff3`
+## Examples (assistant may adapt as needed)
+- Detect tracking branch: `git rev-parse --abbrev-ref --symbolic-full-name @{u}`
+- Default remote head: `git remote show origin | sed -n 's/.*HEAD branch: //p'`
+- Check fast‑forward: `git merge-base --is-ancestor HEAD origin/main && git merge --ff-only origin/main`
+- Rebase explicitly: `git rebase --autostash origin/main`
+- List conflicts: `git diff --name-only --diff-filter=U`
 
----
-
-## 1) Inbound Intent (diff-only)
-
-- Divergence numbers & store for later:
-  !`LA=$(git rev-list --left-right --count HEAD...$(cat .git/merge_up_sha) | awk '{print $1}'); UB=$(git rev-list --left-right --count HEAD...$(cat .git/merge_up_sha) | awk '{print $2}'); echo "Local ahead=$LA, Upstream ahead=$UB" | tee .git/merge_divergence.txt`
-
-- Changed files & summary (with rename/copy detect):
-  !`git diff --name-status HEAD...$(cat .git/merge_up_sha)`
-  !`git diff -M -C --summary HEAD...$(cat .git/merge_up_sha)`
-
-- Compact patch (save full, print head):
-  !`git diff --no-color --unified=0 HEAD...$(cat .git/merge_up_sha) | tee .git/inbound.patch | sed -n '1,400p'`
-
-- Emit minimal **intent** artifact (you can flesh this out as needed):
-  !`printf "%s\n" "Upstream intent (from diffs only) -> see .git/inbound.patch" | tee .git/merge-intent.txt`
-
----
-
-## 2) Strategy — FF or explicit rebase (no git pull)
-
-- If **fast-forward** is possible (HEAD is ancestor of upstream), do it:
-  !`if git merge-base --is-ancestor HEAD "$(cat .git/merge_up_sha)"; then git merge --ff-only "$(cat .git/merge_up_sha)"; echo "Fast-forwarded to $(cat .git/merge_up_ref)"; exit 0; fi`
-
-- Otherwise **explicit rebase** onto the single upstream commit:
-  !`git rebase --autostash "$(cat .git/merge_up_sha)" || true`
-
----
-
-## 3) Conflict Loop — intent‑aware
-
-- List conflicted files (if any):
-  !`git diff --name-only --diff-filter=U`
-
-- For each conflicted file, show base/ours/theirs context and attempt minimal patching guided by intent:
-  !`for f in $(git diff --name-only --diff-filter=U); do echo "---- $f (BASE) ----"; git show ":1:$f" | sed -n '1,80p'; echo "---- $f (OURS) ----"; git show ":2:$f" | sed -n '1,80p'; echo "---- $f (THEIRS) ----"; git show ":3:$f" | sed -n '1,80p'; done`
-  !`git apply -3 --recount --whitespace=fix || git apply --reject --whitespace=fix`
-  !`for f in $(git diff --name-only --diff-filter=U); do git add "$f" || true; done`
-  !`git add -A`
-  !`git rebase --continue || true`
-
-- If a file can’t be safely auto‑reconciled, leave precise `FIXME(merge)` notes and a short rationale.
-
----
-
-## 4) Post‑checks (TypeScript‑aware)
-
-- If deps/lockfiles changed, install lightly:
-  !`if [ -f pnpm-lock.yaml ]; then pnpm install --prefer-offline --ignore-scripts || true; elif [ -f package-lock.json ]; then npm ci --no-audit --no-fund || npm i --no-audit --no-fund; elif [ -f yarn.lock ]; then yarn install --ignore-scripts || true; fi`
-
-- TS/build sanity (non‑fatal):
-  !`if [ -f tsconfig.json ]; then npx tsc -p . --noEmit || true; fi`
-
-- If we stashed, pop:
-  !`git stash list | grep -q 'WIP on' && git stash pop || true`
-
-- Report:
-  - Strategy (FF / rebase clean / rebase w/ conflicts)
-  - Count of inbound commits / files changed
-  - TL;DR from `.git/merge-intent.txt`
-  - Next step if previously pushed: consider `git push --force-with-lease`
-
----
-
-## Guardrails
-
-- Linear history; no merge commits created.
-- No interactive flags.
-- Minimal diffs; avoid formatting churn.
-- Uses persisted files so later snippets can read upstream info reliably.
+## Output
+- Short report: strategy (FF/rebase), number of inbound commits, conflicted files (if any), and a one‑line description of inbound intent.
