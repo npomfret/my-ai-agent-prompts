@@ -122,32 +122,26 @@ Decision tree (linear history only):
 
 ## 3) Conflict Loop — preserve **intent** over literal code
 
-When rebase stops:
+When rebase stops, list conflicted files:
+!`git diff --name-only --diff-filter=U`
 
-- List conflicted files:
-  !`git diff --name-only --diff-filter=U`
+For each conflicted file, Claude will:
+1) Show base/ours/theirs fragments for context (first 60 lines each):
+   !`for f in $(git diff --name-only --diff-filter=U); do echo "---- $f (BASE) ----"; git show ":1:$f" | sed -n '1,60p'; echo "---- $f (OURS) ----"; git show ":2:$f" | sed -n '1,60p'; echo "---- $f (THEIRS) ----"; git show ":3:$f" | sed -n '1,60p'; done`
 
-- For each file:
-  1) Gather stages for reasoning:
-     !`git show :1:<path> | sed -n '1,60p'` (base)
-     !`git show :2:<path> | sed -n '1,60p'` (ours)
-     !`git show :3:<path> | sed -n '1,60p'` (theirs)
+2) Apply the intent bias from the JSON to craft minimal patches, then apply them:
+   !`git apply -3 --recount --whitespace=fix || git apply --reject --whitespace=fix`
 
-  2) Apply bias using intent JSON:  
-     - **Bugfix/security** → prefer **theirs**; adapt local call sites/APIs.  
-     - **Refactor vs local feature** → keep local behavior; adopt new APIs/types/renames.  
-     - **Tests/lockfiles/schema/contracts** → prefer **theirs**; update local code to satisfy new contract.  
-     - **Config/format** → prefer **theirs** unless it breaks tooling.
+3) Stage resolved files safely (no angle-bracket placeholders):
+   !`for f in $(git diff --name-only --diff-filter=U); do git add "$f" || true; done`
+   > If a file is fully resolved it will drop out of the U-list; in that case a final safety net:
+   !`git add -A`
 
-  3) Synthesize a **minimal unified diff patch** against the current working tree for `<path>`, preserving runtime behavior, then:
-     !`git apply -3 --recount --whitespace=fix || git apply --reject --whitespace=fix`
-     !`git add <path>`
-
-- Continue rebase; repeat as needed:
-  !`git rebase --continue || true`
+4) Continue the rebase and loop until done:
+   !`git rebase --continue || true`
 
 - If a file cannot be safely auto-reconciled:  
-  - Remove markers where clear; leave targeted `FIXME(merge)` notes; stage the best safe version.  
+  - Remove obvious markers; leave targeted `FIXME(merge)` notes.  
   - Print a short rationale and suggested follow-ups.
 
 ---
