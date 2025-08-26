@@ -1,8 +1,9 @@
 ---
-description: Intent-aware inbound merge without merge commits. Fast-forward if clean; otherwise rebase with diff3 conflicts and LLM-guided conflict resolution that preserves intent (not just code).
-argument-hint: [optional upstream; defaults to @{u}]
+description: Intent-aware inbound update with a fast path (FF/rebase clean) and an LLM-guided conflict path that preserves behavior/intent. Linear history only (no merge commits).
+argument-hint: "[optional upstream ref, e.g. origin/main | defaults to @{u} or origin/<HEAD>]"
 allowed-tools: >
   Bash(git fetch:*),
+  Bash(git remote:*),
   Bash(git rev-parse:*),
   Bash(git rev-list:*),
   Bash(git diff:*),
@@ -15,7 +16,6 @@ allowed-tools: >
   Bash(git status:*),
   Bash(git stash:*),
   Bash(git apply:*),
-  Bash(git checkout:*),
   Bash(git switch:*),
   Bash(git log:*),
   Bash(cat:*),
@@ -23,106 +23,168 @@ allowed-tools: >
   Bash(mkdir:*),
   Bash(sed:*),
   Bash(awk:*),
-  Bash(tr:*)
+  Bash(tr:*),
+  Bash(node:*),
+  Bash(pnpm:*),
+  Bash(npm:*),
+  Bash(yarn:*)
 ---
 
 # /merge
 
-> Use an **LLM-first** flow to analyze inbound changes, infer intent, and perform a linear update: **fast-forward** if possible; otherwise **rebase (no merge commits)**. If conflicts occur, I will synthesize minimal patches that keep behavior consistent with the inferred intent and then continue the rebase.
+> Perform an **LLM-first**, **linear** update from upstream onto the current branch.  
+> Fast path: **fast-forward** or **clean rebase**.  
+> Conflict path: analyze **diff-only intent**, synthesize **minimal patches** that preserve behavior, then continue the rebase.
 
-## Context (generated via Bash and included for reasoning)
+---
 
-- Fetch lightly for speed (does not alter working tree)  
-  !`git fetch --prune --quiet --filter=blob:none`
+## 0) Preflight & Upstream Resolution (safe by default)
 
-- Divergence counts (AHEAD local / BEHIND upstream)  
-  !`git rev-list --left-right --count HEAD...@{u}`
+- Refuse if in a detached HEAD:
+  !`if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then echo "Detached HEAD — switch to a branch first."; exit 1; fi`
 
-- Current branch & status  
-  !`git branch --show-current`  
+- Ensure repo is not shallow (otherwise fetch base history):
+  !`if git rev-parse --is-shallow-repository | grep -q true; then git fetch --unshallow --quiet; fi`
+
+- Determine upstream target `$UP`:
+  1) If `$ARGUMENTS` provided, use that.  
+  2) Else if HEAD has upstream, use `@{u}`.  
+  3) Else detect default remote branch: `git remote show origin | sed -n 's/.*HEAD branch: //p'` → `origin/<HEAD>`
+  !`UP="$ARGUMENTS"; if [ -z "$UP" ]; then UP="@{u}"; fi; if ! git rev-parse --verify --quiet "$UP" >/dev/null; then HEADBR=$(git remote show origin | sed -n 's/.*HEAD branch: //p'); UP="origin/${HEADBR:-main}"; fi; echo "Upstream: $UP"`
+
+- Light fetch (no working tree changes, blob-less for speed):
+  !`git fetch --prune --quiet --filter=blob:none --recurse-submodules=no`
+
+- Quick hygiene:
+  !`git config rerere.enabled true`
+  !`git config merge.conflictStyle diff3`
+
+- Working tree status / advice on stashing unrelated edits:
   !`git status --porcelain -b`
-
-- Inbound file list & summary (rename/copy detection)  
-  !`git diff --name-status HEAD..@{u}`  
-  !`git diff -M -C --summary HEAD...@{u}`
-
-- Inbound compact patch (first 400 lines, full saved to .git/inbound.patch)  
-  !`mkdir -p .git && git diff --unified=0 --no-color HEAD...@{u} | tee .git/inbound.patch | sed -n '1,400p'`
-
-- Files you’ve changed locally and path overlap with inbound  
-  !`comm -12 <(git diff --name-only | sort) <(git diff --name-only HEAD..@{u} | sort) | wc -l | tr -d ' '`
-
-- Pre-map conflicted paths (dry-run)  
-  !`BASE=$(git merge-base HEAD @{u}); git merge-tree "$BASE" HEAD @{u} | sed -n '1,200p'`
+  > If unrelated local edits exist, I may offer to stash (`git stash -u -k`) and auto-pop later.
 
 ---
 
-## Your task
+## 1) Inbound Intent Analysis (diffs-only; no commit messages)
 
-You are an **agentic merge assistant** operating inside Claude Code. Perform an **intent-aware, linear update** from upstream to the current branch, using the following policy:
+- Compute divergence (LOCAL_AHEAD, LOCAL_BEHIND):
+  !`git rev-list --left-right --count HEAD..."$UP"`
 
-### 1) Analyze inbound intent (diffs-only)
-- Infer high-level goals per file/group: `bugfix | refactor | feature | tests | deps | config | schema`. **Do not** use commit messages. Use *diff evidence* only.
-- Produce a **concise JSON** (print to chat **and** write to `.git/merge-intent.json`) of the form:
+- Snapshot core signals:
+  - Changed files & summary (rename/copy detection)
+    !`git diff --name-status HEAD.."$UP"`
+    !`git diff -M -C --summary HEAD..."$UP"`
 
-```json
-{
-  "summary": "Natural-language TL;DR of inbound change intent from diffs only",
-  "categories": [
-    { "type": "refactor", "confidence": 0.86, "rationale": "e.g., massive renames + signature shifts", "files": ["src/..."] }
-  ],
-  "signals": {
-    "renamesDetected": true,
-    "testsTouched": false,
-    "lockfilesTouched": false,
-    "schemaTouched": false
-  },
-  "recommendedResolutionBias": {
-    "default": "theirs|ours|mixed",
-    "overrides": [
-      { "glob": "tests/**", "prefer": "theirs" },
-      { "glob": "*lock*.json", "prefer": "theirs" },
-      { "glob": "src/**", "prefer": "theirs-if-bugfix-else-mixed" }
-    ]
+  - Compact unified patch (save full to `.git/inbound.patch`, print first 400 lines):
+    !`mkdir -p .git && git diff --no-color --unified=0 HEAD..."$UP" | tee .git/inbound.patch | sed -n '1,400p'`
+
+- Produce **intent JSON** (print & write `.git/merge-intent.json`) and a **one-line TL;DR** (`.git/merge-intent.txt`). Infer categories per file from **diff evidence** only:
+  ```json
+  {
+    "summary": "TL;DR of inbound change intent (from diffs only).",
+    "categories": [
+      { "type": "refactor|bugfix|feature|tests|deps|config|schema", "confidence": 0.00, "rationale": "why", "files": ["..."] }
+    ],
+    "signals": {
+      "renamesDetected": false,
+      "testsTouched": false,
+      "lockfilesTouched": false,
+      "schemaTouched": false
+    },
+    "recommendedResolutionBias": {
+      "default": "mixed",
+      "overrides": [
+        { "glob": "tests/**", "prefer": "theirs" },
+        { "glob": "*lock*.json", "prefer": "theirs" },
+        { "glob": "package.json", "prefer": "theirs" },
+        { "glob": "src/**", "prefer": "theirs-if-bugfix-else-mixed" }
+      ]
+    }
   }
-}
-```
-
-- Also emit a **one-line TL;DR** and write it to `.git/merge-intent.txt`.
-
-**Write files:** Use `Bash(tee:*)`, e.g. `printf '%s' '<json>' | tee .git/merge-intent.json >/dev/null`.
-
-### 2) Choose the update strategy (no merge commits)
-Follow this decision tree:
-- If upstream is **not ahead** → report “Up to date” and exit.
-- If upstream is ahead and you have **no local changes/divergence** → run `git pull --ff-only`.
-- Otherwise, run a rebase that preserves linear history with readable conflicts:  
-  `git -c merge.conflictStyle=diff3 pull --rebase=merges --autostash -X theirs`
-
-### 3) If rebase stops on conflicts → preserve **intent** (not necessarily exact code)
-- Enable learned resolutions: `git config rerere.enabled true`.
-- For each conflicted file (`git diff --name-only --diff-filter=U`):
-  1. Load **stage 2 (ours)** and **stage 3 (theirs)**: `git show :2:<path>`, `git show :3:<path>`.
-  2. Using the intent JSON, synthesize a **minimal unified diff patch** against the **current working tree** for `<path>` that preserves runtime behavior and aligns with inbound goals. Examples:
-     - **Bugfix/security**: Prefer *theirs*; re-implement fix on top of local scaffolding if needed.
-     - **Refactor vs local feature**: Keep local behavior; adopt API/rename semantics from refactor.
-     - **Tests/lockfiles/schema/contracts**: Prefer *theirs*; update local code to satisfy the new contract.
-  3. Apply with tolerance: `git apply -3 --recount --whitespace=fix` (retry with relaxed hunk fuzz if needed).
-  4. `git add <path>`.
-
-- After all files are addressed: `git rebase --continue`. If further conflicts arise, repeat this loop.
-
-### 4) Post-checks
-- If lockfiles or deps changed, run the appropriate install step (Node: consider `pnpm install --prefer-offline` or `npm i --no-audit --no-fund`) and re-run `git add` if files updated.
-- Print a short **merge report**: fast path taken or number of conflicted files resolved + the `.git/merge-intent.txt` TL;DR (first line).
-
-### Guardrails
-- Never create merge commits; prefer `--ff-only` or `--rebase=merges`.
-- Keep patches tight—no sweeping style churn.
-- If a patch cannot be made safely, comment the rationale and leave the file staged with conflict markers removed, preserving compilation/tests when possible.
+  ```
+  > Use `Bash(tee:*)` to write these files.
 
 ---
 
-## Notes
-- Use `@{u}` as the default upstream; if the user passes an argument, treat it as the upstream refspec (e.g., `origin/main`).  
-- Always prioritize **behavioral intent** over literal code when resolving conflicts.
+## 2) Strategy Selection — **no merge commits**
+
+Decision tree (linear history only):
+
+- If upstream **not ahead** → print “Up to date” and exit.
+- If upstream ahead and **no local divergence** → `git pull --ff-only` from `$UP`.
+- Otherwise → **rebase cleanly** with auto-stash and diff3 markers:
+  !`git -c merge.conflictStyle=diff3 pull --rebase --autostash --no-stat`
+  > If `git pull --rebase` is insufficient (e.g., multiple remote parents), fallback to:
+  !`git fetch --quiet && git rebase --rebase-merges=interactive --autostash "$UP" || true`
+  (Will still avoid creating merge commits on update; rebase-merges only used to replay local merge structure if it exists.)
+
+---
+
+## 3) Conflict Loop — preserve **intent** over literal code
+
+When rebase stops:
+
+- List conflicted files:
+  !`git diff --name-only --diff-filter=U`
+
+- For each file:
+  1) Gather stages for reasoning:
+     !`git show :1:<path> | sed -n '1,60p'` (base)
+     !`git show :2:<path> | sed -n '1,60p'` (ours)
+     !`git show :3:<path> | sed -n '1,60p'` (theirs)
+
+  2) Apply bias using intent JSON:  
+     - **Bugfix/security** → prefer **theirs**; adapt local call sites/APIs.  
+     - **Refactor vs local feature** → keep local behavior; adopt new APIs/types/renames.  
+     - **Tests/lockfiles/schema/contracts** → prefer **theirs**; update local code to satisfy new contract.  
+     - **Config/format** → prefer **theirs** unless it breaks tooling.
+
+  3) Synthesize a **minimal unified diff patch** against the current working tree for `<path>`, preserving runtime behavior, then:
+     !`git apply -3 --recount --whitespace=fix || git apply --reject --whitespace=fix`
+     !`git add <path>`
+
+- Continue rebase; repeat as needed:
+  !`git rebase --continue || true`
+
+- If a file cannot be safely auto-reconciled:  
+  - Remove markers where clear; leave targeted `FIXME(merge)` notes; stage the best safe version.  
+  - Print a short rationale and suggested follow-ups.
+
+---
+
+## 4) Post-checks (TypeScript-aware)
+
+- If deps/lockfiles changed, run a light install:
+  !`if [ -f pnpm-lock.yaml ]; then pnpm install --prefer-offline --ignore-scripts || true; elif [ -f package-lock.json ]; then npm ci --no-audit --no-fund || npm i --no-audit --no-fund; elif [ -f yarn.lock ]; then yarn install --ignore-scripts || true; fi`
+
+- Quick TS/build check if present (non-fatal):
+  !`if [ -f tsconfig.json ]; then npx tsc -p . --noEmit || true; fi`
+
+- If we stashed, pop & re-stage any auto-fixes:
+  !`git stash list | grep -q 'WIP on' && git stash pop || true`
+
+- Print **merge report**:
+  - Strategy taken (FF / rebase clean / rebase with conflicts)
+  - Count of inbound commits and files touched
+  - Any non-trivial merges and how intent was handled
+  - TL;DR (`.git/merge-intent.txt` first line)
+  - Next step if branch was previously pushed:
+    > Consider `git push --force-with-lease`.
+
+---
+
+## Guardrails
+
+- **Never** create merge commits as part of the update.
+- Avoid interactive flags (no TUIs).
+- Keep patches **minimal**; no mass formatting churn.
+- Respect `rerere` for learned resolutions across runs.
+- If `$UP` resolves to the current branch (misconfig), abort with guidance.
+
+---
+
+## Notes & Tips
+
+- You can pass an explicit upstream (e.g., `/merge origin/release/2025.08`).  
+- Default upstream priority: `$ARGUMENTS` → `@{u}` → `origin/<HEAD>`.  
+- Submodules are not updated by default; add explicit steps if needed.
