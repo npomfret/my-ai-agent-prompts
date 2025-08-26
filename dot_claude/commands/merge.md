@@ -1,5 +1,5 @@
 ---
-description: Intent-aware inbound update with a fast path (FF/rebase clean) and an LLM-guided conflict path that preserves behavior/intent. Linear history only (no merge commits).
+description: Intent-aware inbound update with a fast path (FF/rebase clean) and an LLM-guided conflict path that preserves behavior/intent. Linear history only (no merge commits). This version avoids `git pull --rebase` and always rebases onto a single, explicitly resolved upstream to prevent “rebase onto multiple branches” errors.
 argument-hint: "[optional upstream ref, e.g. origin/main | defaults to @{u} or origin/<HEAD>]"
 allowed-tools: >
   Bash(git fetch:*),
@@ -7,16 +7,13 @@ allowed-tools: >
   Bash(git rev-parse:*),
   Bash(git rev-list:*),
   Bash(git diff:*),
-  Bash(git pull:*),
+  Bash(git merge:*),
   Bash(git config:*),
-  Bash(git merge-base:*),
-  Bash(git merge-tree:*),
   Bash(git rebase:*),
   Bash(git add:*),
   Bash(git status:*),
   Bash(git stash:*),
   Bash(git apply:*),
-  Bash(git switch:*),
   Bash(git log:*),
   Bash(cat:*),
   Bash(tee:*),
@@ -32,30 +29,32 @@ allowed-tools: >
 
 # /merge
 
-> Perform an **LLM-first**, **linear** update from upstream onto the current branch.  
+> Perform an **LLM-first**, **linear** update from a single explicit upstream onto the current branch (no merge commits).  
 > Fast path: **fast-forward** or **clean rebase**.  
 > Conflict path: analyze **diff-only intent**, synthesize **minimal patches** that preserve behavior, then continue the rebase.
 
 ---
 
-## 0) Preflight & Upstream Resolution (safe by default)
+## 0) Preflight & Upstream Resolution (safe, explicit)
 
 - Refuse if in a detached HEAD:
   !`if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then echo "Detached HEAD — switch to a branch first."; exit 1; fi`
 
-- Ensure repo is not shallow (otherwise fetch base history):
+- Ensure repo is not shallow (otherwise fetch full history we need for rebase):
   !`if git rev-parse --is-shallow-repository | grep -q true; then git fetch --unshallow --quiet; fi`
 
-- Determine upstream target `$UP`:
-  1) If `$ARGUMENTS` provided, use that.  
-  2) Else if HEAD has upstream, use `@{u}`.  
-  3) Else detect default remote branch: `git remote show origin | sed -n 's/.*HEAD branch: //p'` → `origin/<HEAD>`
-  !`UP="$ARGUMENTS"; if [ -z "$UP" ]; then UP="@{u}"; fi; if ! git rev-parse --verify --quiet "$UP" >/dev/null; then HEADBR=$(git remote show origin | sed -n 's/.*HEAD branch: //p'); UP="origin/${HEADBR:-main}"; fi; echo "Upstream: $UP"`
+- Determine and **explicitly resolve** upstream target to a single commit-ish (`$UP`):
+  !`cur=$(git rev-parse --abbrev-ref HEAD);`
+  !`cand="$ARGUMENTS";`
+  !`if [ -z "$cand" ]; then cand=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || true); fi`
+  !`if [ -z "$cand" ]; then headbr=$(git remote show origin 2>/dev/null | sed -n 's/.*HEAD branch: //p'); cand="origin/${headbr:-main}"; fi`
+  !`if ! git rev-parse --verify --quiet "${cand}^{commit}" >/dev/null; then echo "Cannot resolve upstream: $cand"; exit 1; fi`
+  !`UP="$cand"; echo "Upstream: $UP"`
 
 - Light fetch (no working tree changes, blob-less for speed):
   !`git fetch --prune --quiet --filter=blob:none --recurse-submodules=no`
 
-- Quick hygiene:
+- Quick hygiene (helps conflict clarity and reuse):
   !`git config rerere.enabled true`
   !`git config merge.conflictStyle diff3`
 
@@ -67,8 +66,8 @@ allowed-tools: >
 
 ## 1) Inbound Intent Analysis (diffs-only; no commit messages)
 
-- Compute divergence (LOCAL_AHEAD, LOCAL_BEHIND):
-  !`git rev-list --left-right --count HEAD..."$UP"`
+- Compute divergence (LOCAL_AHEAD, UPSTREAM_AHEAD):
+  !`set -- $(git rev-list --left-right --count HEAD..."$UP"); LA=$1; UB=$2; echo "Local ahead=$LA, Upstream ahead=$UB"`
 
 - Snapshot core signals:
   - Changed files & summary (rename/copy detection)
@@ -108,15 +107,15 @@ allowed-tools: >
 
 ## 2) Strategy Selection — **no merge commits**
 
-Decision tree (linear history only):
+Decision tree (linear history only; **no `git pull --rebase`**):
 
-- If upstream **not ahead** → print “Up to date” and exit.
-- If upstream ahead and **no local divergence** → `git pull --ff-only` from `$UP`.
-- Otherwise → **rebase cleanly** with auto-stash and diff3 markers:
-  !`git -c merge.conflictStyle=diff3 pull --rebase --autostash --no-stat`
-  > If `git pull --rebase` is insufficient (e.g., multiple remote parents), fallback to:
-  !`git fetch --quiet && git rebase --rebase-merges=interactive --autostash "$UP" || true`
-  (Will still avoid creating merge commits on update; rebase-merges only used to replay local merge structure if it exists.)
+- If `UB = 0` → **Up to date** (nothing to apply).
+- If `LA = 0` and `UB > 0` → **fast-forward**:
+  !`git merge --ff-only "$UP"`
+- Else → **explicit rebase** (single upstream ref):
+  !`git rebase --autostash "$UP" || true`
+  > If your local branch contains merge commits you want to replay:
+  !`git rebase --rebase-merges --autostash "$UP" || true`
 
 ---
 
@@ -132,9 +131,9 @@ For each conflicted file, Claude will:
 2) Apply the intent bias from the JSON to craft minimal patches, then apply them:
    !`git apply -3 --recount --whitespace=fix || git apply --reject --whitespace=fix`
 
-3) Stage resolved files safely (no angle-bracket placeholders):
+3) Stage resolved files safely:
    !`for f in $(git diff --name-only --diff-filter=U); do git add "$f" || true; done`
-   > If a file is fully resolved it will drop out of the U-list; in that case a final safety net:
+   > Safety net for residual resolutions:
    !`git add -A`
 
 4) Continue the rebase and loop until done:
