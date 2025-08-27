@@ -4,7 +4,8 @@ description: git commit message generation that captures the intent of the commi
 
 # /commit
 
-> Generate a detailed, but not pedantic, commit message for the current changeset.
+> Generate a brief but detailed (non-pedantic), commit message for the current changeset.
+> Focus on the important changes.
 > DO NOT COMMIT THE CODE - only produce a commit message
 
 - [ ] use the git cli to view and analyse this changeset. ALL OF IT, every single changed file. No exceptions.
