@@ -2,7 +2,7 @@
 description: git commit message generation that captures the intent of the commit as well as the important changes contained within
 ---
 
-# /commit
+# /comment
 
 > Generate a commit message for the current changeset. It should be accurate but brief focussing on the important changes and crucially the _intent_ of the changes.
 > DO NOT COMMIT THE CODE - only produce a commit message
