@@ -11,17 +11,17 @@ source "$SCRIPT_DIR/common.sh"
 TARGET_DIR="${1:-$(pwd)}"
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-echo -e "${BLUE}Setting up .mcp.json in: ${TARGET_DIR}${NC}"
+echo -e "${BLUE}Setting up _mcp.json in: ${TARGET_DIR}${NC}"
 
 # Change to target directory
 cd "$TARGET_DIR"
 
-# Create or update .mcp.json file
+# Create or update _mcp.json file
 setup_mcp_json() {
-    local mcp_file=".mcp.json"
+    local mcp_file="_mcp.json"
     
     if [ ! -f "$mcp_file" ]; then
-        # Create new .mcp.json with default MCP servers
+        # Create new _mcp.json with default MCP servers
         cat > "$mcp_file" << 'EOF'
 {
   "mcpServers": {
@@ -49,10 +49,10 @@ setup_mcp_json() {
   }
 }
 EOF
-        echo -e "${GREEN}  ✓ Created .mcp.json with MCP servers${NC}"
+        echo -e "${GREEN}  ✓ Created _mcp.json with MCP servers${NC}"
         echo -e "${BLUE}  Tip: Create .mcp.local.json for personal MCP servers (gitignored)${NC}"
     else
-        echo -e "${BLUE}  .mcp.json already exists${NC}"
+        echo -e "${BLUE}  _mcp.json already exists${NC}"
         
         # Check if we should merge or update
         if command -v jq &> /dev/null; then
@@ -84,7 +84,7 @@ EOF
             }'
             
             # Create a temporary file for the merged result
-            local temp_file=".mcp.json.tmp"
+            local temp_file="_mcp.json.tmp"
             
             # Merge the JSON files
             jq --argjson defaults "$default_servers" '
@@ -94,7 +94,7 @@ EOF
             # Check if anything changed
             if ! cmp -s "$mcp_file" "$temp_file"; then
                 mv "$temp_file" "$mcp_file"
-                echo -e "${GREEN}  ✓ Updated .mcp.json with missing MCP servers${NC}"
+                echo -e "${GREEN}  ✓ Updated _mcp.json with missing MCP servers${NC}"
             else
                 rm "$temp_file"
                 echo -e "${BLUE}  All default MCP servers already present${NC}"
@@ -106,7 +106,7 @@ EOF
 }
 
 # Setup MCP servers
-echo -e "\n${BLUE}Setting up .mcp.json...${NC}"
+echo -e "\n${BLUE}Setting up _mcp.json...${NC}"
 setup_mcp_json
 
 # Symlink MCP inventory file
@@ -127,12 +127,12 @@ echo -e "\n${BLUE}Updating .gitignore...${NC}"
 update_gitignore_patterns ".mcp.local.json" ".claude/mcp-inventory.json"
 echo -e "${GREEN}  ✓ Added .mcp.local.json and .claude/mcp-inventory.json to .gitignore${NC}"
 
-# Add MCP files to git (only .mcp.json, not the inventory symlink)
+# Add MCP files to git (only _mcp.json, not the inventory symlink)
 echo -e "\n${BLUE}Adding MCP files to git...${NC}"
 if git rev-parse --git-dir > /dev/null 2>&1; then
-    if [ -f ".mcp.json" ] && ! git ls-files --error-unmatch ".mcp.json" >/dev/null 2>&1; then
-        git add ".mcp.json"
-        echo -e "${GREEN}  ✓ Added .mcp.json to git${NC}"
+    if [ -f "_mcp.json" ] && ! git ls-files --error-unmatch "_mcp.json" >/dev/null 2>&1; then
+        git add "_mcp.json"
+        echo -e "${GREEN}  ✓ Added _mcp.json to git${NC}"
     fi
 else
     echo -e "${YELLOW}  Not a git repository - skipping git add${NC}"
