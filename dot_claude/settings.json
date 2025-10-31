@@ -24,7 +24,8 @@
       "Bash(vitest:*)",
       "Bash(xargs:*)",
       "Read",
-      "WebFetch"
+      "WebFetch",
+      "WebSearch"
     ],
     "deny": []
   }
