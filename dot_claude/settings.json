@@ -32,13 +32,13 @@
   "hooks": {
     "userPromptSubmit": [
       {
-        "script": "scripts/skill-activator.sh",
+        "script": ".claude/skill-activator.sh",
         "rulesFile": ".claude/skill-rules.json"
       }
     ],
     "stopEvent": [
       {
-        "script": "scripts/post-response-checker.sh",
+        "script": ".claude/post-response-checker.sh",
         "rulesFile": ".claude/skill-rules.json"
       }
     ]

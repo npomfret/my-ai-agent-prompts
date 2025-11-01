@@ -44,15 +44,15 @@ merge_settings_json() {
             # Get source and target as variables
             .[0] as $source | .[1] as $target |
             
-            # Start with target and merge permissions only
+            # Start with target and merge permissions and hooks
             $target |
             .permissions.allow = (($source.permissions.allow // []) + ($target.permissions.allow // []) | unique | sort) |
-            .permissions.deny = (($source.permissions.deny // []) + ($target.permissions.deny // []) | unique | sort)
-        ' "$source_settings" "$target_settings" > "$temp_file"
+            .permissions.deny = (($source.permissions.deny // []) + ($target.permissions.deny // []) | unique | sort) |
+            .hooks = ($source.hooks // {}) * ($target.hooks // {})' "$source_settings" "$target_settings" > "$temp_file"
         
         # Replace the target file
         mv "$temp_file" "$target_settings"
-        echo -e "${GREEN}  ✓ Merged settings.json (combined permissions from both files)${NC}"
+        echo -e "${GREEN}  ✓ Merged settings.json (combined permissions and hooks from both files)${NC}"
     else
         echo -e "${YELLOW}  Warning: jq not installed. Cannot merge settings.json automatically.${NC}"
         echo -e "${YELLOW}  Please manually merge settings from:${NC}"
@@ -145,12 +145,21 @@ echo -e "${GREEN}  ✓ Copied skill-rules.json to .claude/${NC}"
 {
     echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
     echo "skill-rules.json"
+    echo "skill-activator.sh"
+    echo "post-response-checker.sh"
     echo "# End of managed section"
 } > .claude/.gitignore
 echo -e "${GREEN}  ✓ Created .claude/.gitignore${NC}"
 
+echo -e "\n${BLUE}8. Setting up hook scripts...${NC}"
+mkdir -p .claude
+cp "$SCRIPT_BASE_DIR/dot_claude/skill-activator.sh" ".claude/skill-activator.sh"
+cp "$SCRIPT_BASE_DIR/dot_claude/post-response-checker.sh" ".claude/post-response-checker.sh"
+chmod +x ".claude/skill-activator.sh" ".claude/post-response-checker.sh"
+echo -e "${GREEN}  ✓ Copied and configured hook scripts${NC}"
+
 # Add necessary files to git
-echo -e "\n${BLUE}8. Adding necessary files to git...${NC}"
+echo -e "\n${BLUE}9. Adding necessary files to git...${NC}"
 add_files_to_git() {
     # Check if we're in a git repository
     if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -159,6 +168,8 @@ add_files_to_git() {
             ".mcp.json"
             ".claude/settings.json"
             ".claude/skill-rules.json"
+            ".claude/skill-activator.sh"
+            ".claude/post-response-checker.sh"
         )
         
         local added_files=()
@@ -195,4 +206,5 @@ echo "  - skill-rules.json copied to: .claude/skill-rules.json"
 echo "  - MCP servers configured in: .mcp.json"
 echo "  - All symlinks and .mcp.local.json added to .gitignore"
 echo "  - Necessary files added to git"
+echo "  - Hook scripts copied to: .claude/"
 echo -e "\n${YELLOW}Remember to use '/p' before every request for intelligent tool selection!${NC}"
