@@ -1,1 +1,4 @@
-Provides answers to questions based on a specific codebase, with a focus on TypeScript and JavaScript projects. Helps developers understand the code, identify relevant files and functions, and navigate the project structure.
+---
+name: codebase-qa-agent
+description: Provides answers to questions based on a specific codebase, with a focus on TypeScript and JavaScript projects. Helps developers understand the code, identify relevant files and functions, and navigate the project structure.
+---

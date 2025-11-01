@@ -40,7 +40,7 @@
       "name": "dev-docs-management",
       "keywords": ["documentation", "docs", "plan", "context", "task"],
       "intents": ["create docs", "update plan", "manage context"],
-      "filePathTriggers": ["*.md", "docs/"],
+      "filePathTriggers": ["*.md", "docs/", "tasks/"],
       "contentTriggers": ["# Plan", "# Context", "# Tasks"]
     },
     {
@@ -59,7 +59,7 @@
     },
     {
       "name": "generate-test-cases",
-      "keywords": ["test", "jest", "mocha", "chai", "cypress", "playwright"],
+      "keywords": ["test", "jest", "mocha", "chai", "cypress", "playwright", "vitest", "unit test", "integration test", "e2e test"],
       "intents": ["write tests", "create test cases", "test this function"],
       "filePathTriggers": ["*.test.ts", "*.spec.ts"],
       "contentTriggers": ["describe(", "it(", "expect("]
@@ -73,7 +73,7 @@
     },
     {
       "name": "refactor-code",
-      "keywords": ["refactor", "cleanup", "improve", "restructure"],
+      "keywords": ["refactor", "cleanup", "improve", "restructure", "readable", "maintainable", "dry", "don't repeat yourself"],
       "intents": ["refactor this", "clean up this code", "improve this function"],
       "filePathTriggers": ["*.ts", "*.js"],
       "contentTriggers": ["function", "class", "=>"]
@@ -101,7 +101,7 @@
     },
     {
       "name": "systematic-debugging",
-      "keywords": ["debug", "error", "bug", "issue", "fix"],
+      "keywords": ["debug", "error", "bug", "issue", "fix", "problem", "troubleshoot", "why is this not working"],
       "intents": ["debug this", "fix this error", "find the bug"],
       "filePathTriggers": ["*.ts", "*.js"],
       "contentTriggers": ["console.log", "debugger", "throw new Error"]

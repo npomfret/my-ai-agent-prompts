@@ -1,1 +1,4 @@
-Detects vulnerabilities and ensures application security in TypeScript and JavaScript projects. Scans the code for common security flaws and provides recommendations for fixing them.
+---
+name: security-auditor
+description: Detects vulnerabilities and ensures application security in TypeScript and JavaScript projects. Scans the code for common security flaws and provides recommendations for fixing them.
+---

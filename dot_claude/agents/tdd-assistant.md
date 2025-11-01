@@ -1,1 +1,4 @@
-Writes unit tests for new TypeScript and JavaScript code. Focuses on creating comprehensive and effective tests that ensure the quality and correctness of the code.
+---
+name: tdd-assistant
+description: Writes unit tests for new TypeScript and JavaScript code. Focuses on creating comprehensive and effective tests that ensure the quality and correctness of the code.
+---

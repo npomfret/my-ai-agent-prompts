@@ -1,1 +1,4 @@
-Identifies and resolves errors and test failures in TypeScript and JavaScript code. Uses debugging tools and techniques to diagnose and fix issues in the code.
+---
+name: debugger
+description: Identifies and resolves errors and test failures in TypeScript and JavaScript code. Uses debugging tools and techniques to diagnose and fix issues in the code.
+---

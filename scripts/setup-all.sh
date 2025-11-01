@@ -153,10 +153,8 @@ echo -e "${GREEN}  ✓ Created .claude/.gitignore${NC}"
 
 echo -e "\n${BLUE}8. Setting up hook scripts...${NC}"
 mkdir -p .claude
-cp "$SCRIPT_BASE_DIR/dot_claude/skill-activator.sh" ".claude/skill-activator.sh"
-cp "$SCRIPT_BASE_DIR/dot_claude/post-response-checker.sh" ".claude/post-response-checker.sh"
-chmod +x ".claude/skill-activator.sh" ".claude/post-response-checker.sh"
-echo -e "${GREEN}  ✓ Copied and configured hook scripts${NC}"
+create_symlink "$SCRIPT_BASE_DIR/dot_claude/skill-activator.sh" ".claude/skill-activator.sh" "Hook script for skill activation"
+create_symlink "$SCRIPT_BASE_DIR/dot_claude/post-response-checker.sh" ".claude/post-response-checker.sh" "Hook script for post-response checks"
 
 # Add necessary files to git
 echo -e "\n${BLUE}9. Adding necessary files to git...${NC}"
