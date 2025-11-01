@@ -1,8 +1,6 @@
 # AI Agent Prompt Framework
 
-This project provides some useful tools for enhancing AI assistants like Claude Code CLI and Gemini CLI, transforming them into highly effective software engineering partners. It shifts from simple prompt-and-response to a structured, tool-driven workflow that enforces best practices and automates complex tasks.
-
-At its core, this repository offers a collection of scripts, configurations, and predefined "agents" that you can easily integrate into your own projects. These components work together to create a more disciplined and capable AI development environment.
+This project provides a robust framework for enhancing AI coding assistants like Claude Code CLI and Gemini CLI, transforming them into highly effective software engineering partners. It moves beyond simple prompt-and-response interactions to a structured, tool-driven workflow that enforces best practices, automates complex tasks, and ensures disciplined development. By integrating specialized agents, powerful MCP servers, and an intelligent meta-prompt system, this framework empowers AI to understand, analyze, and modify your codebase with unprecedented accuracy and efficiency.
 
 ## Core Concepts
 
@@ -113,3 +111,7 @@ Command line tools
 ```shell
 brew install fd ripgrep ast-grep jq fzf bat eza zoxide httpie git-delta timeout
 ```
+
+## API Usage Stats
+
+View our API usage statistics here: https://aistudio.google.com/usage?timeRange=last-hour&project=gen-lang-client-0884692954

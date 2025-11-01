@@ -142,7 +142,7 @@ function gatherProjectContext(projectDir: string): string {
 // Configuration
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const API_KEY = process.env.GEMINI_API_KEY;
-const PROJECT_DIR = process.env.PROJECT_DIR;
+const PROJECT_DIR = process.env.PROJECT_DIR!;
 const SESSION_SECRET = process.env.SESSION_SECRET || `gemini-session-secret-${uuidv4()}`;
 const SESSION_MAX_AGE = 24 * 60 * 60 * 1000; // 24 hours
 const CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 hour
