@@ -43,23 +43,6 @@ if [ -d ".claude/agents" ]; then
     done
 fi
 
-# Update .gitignore with agent symlink patterns
-echo -e "\n${BLUE}Updating .gitignore with agent patterns...${NC}"
-patterns=()
-if [ -d ".claude/agents" ]; then
-    for link in .claude/agents/*.md; do
-        if [ -L "$link" ]; then
-            patterns+=(".claude/agents/$(basename "$link")")
-        fi
-    done
-fi
-
-if [ ${#patterns[@]} -gt 0 ]; then
-    update_gitignore_patterns "${patterns[@]}"
-    echo -e "${GREEN}  ✓ Added ${#patterns[@]} agent patterns to .gitignore${NC}"
-fi
-
-
 # List what was set up
 echo -e "\n${BLUE}Linked agents:${NC}"
 ls -la .claude/agents/*.md 2>/dev/null | awk '{print "  - " $NF}' | sed 's|.*/||'

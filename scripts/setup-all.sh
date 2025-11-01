@@ -102,27 +102,55 @@ fi
 create_symlink "AI_AGENT.md" "CLAUDE.md" "CLAUDE.md -> AI_AGENT.md"
 create_symlink "AI_AGENT.md" "GEMINI.md" "GEMINI.md -> AI_AGENT.md"
 
-# Update .gitignore with base patterns
-update_gitignore_patterns "CLAUDE.md" "GEMINI.md" "directives"
-
 echo -e "\n${BLUE}2. Setting up .claude directory structure...${NC}"
 
 # Create .claude directories
 mkdir -p .claude/commands
 mkdir -p .claude/agents
+mkdir -p .claude/skills
 
 # Run the individual setup scripts
 echo -e "\n${BLUE}3. Setting up command symlinks...${NC}"
 "$SCRIPT_DIR/setup-commands.sh" "$TARGET_DIR"
+{
+    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
+    ls -1 .claude/commands
+    echo "# End of managed section"
+} > .claude/commands/.gitignore
 
 echo -e "\n${BLUE}4. Setting up agent symlinks...${NC}"
 "$SCRIPT_DIR/setup-agents.sh" "$TARGET_DIR"
+{
+    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
+    ls -1 .claude/agents
+    echo "# End of managed section"
+} > .claude/agents/.gitignore
 
-echo -e "\n${BLUE}5. Setting up .claude/settings.json...${NC}"
+echo -e "\n${BLUE}5. Setting up skill symlinks...${NC}"
+"$SCRIPT_DIR/setup-skills.sh" "$TARGET_DIR"
+{
+    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
+    ls -1 .claude/skills
+    echo "# End of managed section"
+} > .claude/skills/.gitignore
+
+echo -e "\n${BLUE}6. Setting up .claude/settings.json...${NC}"
 merge_settings_json
 
+echo -e "\n${BLUE}7. Copying skill-rules.json...${NC}"
+cp "$SCRIPT_BASE_DIR/skill-rules.json" ".claude/skill-rules.json"
+echo -e "${GREEN}  ✓ Copied skill-rules.json to .claude/${NC}"
+
+# Create .claude/.gitignore
+{
+    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
+    echo "skill-rules.json"
+    echo "# End of managed section"
+} > .claude/.gitignore
+echo -e "${GREEN}  ✓ Created .claude/.gitignore${NC}"
+
 # Add necessary files to git
-echo -e "\n${BLUE}7. Adding necessary files to git...${NC}"
+echo -e "\n${BLUE}8. Adding necessary files to git...${NC}"
 add_files_to_git() {
     # Check if we're in a git repository
     if git rev-parse --git-dir > /dev/null 2>&1; then
@@ -130,6 +158,7 @@ add_files_to_git() {
             "AI_AGENT.md"
             ".mcp.json"
             ".claude/settings.json"
+            ".claude/skill-rules.json"
         )
         
         local added_files=()
@@ -159,8 +188,10 @@ echo -e "\n${BLUE}Summary:${NC}"
 echo "  - AI_AGENT.md is the source file for both CLAUDE.md and GEMINI.md"
 echo "  - Command symlinks in: .claude/commands/"
 echo "  - Agent symlinks in: .claude/agents/"
+echo "  - Skill symlinks in: .claude/skills/"
 echo "  - Inventory symlink: .claude/mcp-inventory.json"
 echo "  - Settings merged into: .claude/settings.json"
+echo "  - skill-rules.json copied to: .claude/skill-rules.json"
 echo "  - MCP servers configured in: .mcp.json"
 echo "  - All symlinks and .mcp.local.json added to .gitignore"
 echo "  - Necessary files added to git"

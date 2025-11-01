@@ -1,0 +1,117 @@
+
+{
+  "skills": [
+    {
+      "name": "backend-process-management",
+      "keywords": ["pm2", "nodemon", "process", "server", "backend", "microservice"],
+      "intents": ["start server", "restart server", "monitor server", "debug backend"],
+      "filePathTriggers": ["server.ts", "app.ts", "index.ts", "ecosystem.config.js"],
+      "contentTriggers": ["import pm2", "import nodemon"]
+    },
+    {
+      "name": "brand-guideline-enforcement",
+      "keywords": ["brand", "style", "guideline", "logo", "color", "font"],
+      "intents": ["check brand", "enforce style", "update logo"],
+      "filePathTriggers": ["*.css", "*.scss", "*.less", "theme.ts"],
+      "contentTriggers": ["primary-color", "font-family"]
+    },
+    {
+      "name": "code-optimization",
+      "keywords": ["optimize", "performance", "slow", "fast", "efficient"],
+      "intents": ["optimize code", "improve performance", "make faster"],
+      "filePathTriggers": ["*.ts", "*.js"],
+      "contentTriggers": ["for (", "while (", ".map(", ".filter(", ".reduce("]
+    },
+    {
+      "name": "code-quality-hooks",
+      "keywords": ["hook", "quality", "lint", "prettier", "husky"],
+      "intents": ["setup hooks", "improve quality", "enforce linting"],
+      "filePathTriggers": [".pre-commit", ".huskyrc", "lint-staged.config.js"],
+      "contentTriggers": ["pre-commit", "lint-staged"]
+    },
+    {
+      "name": "custom-slash-commands",
+      "keywords": ["slash command", "custom command", "automation"],
+      "intents": ["create command", "automate workflow"],
+      "filePathTriggers": ["commands.ts", "slash-commands.ts"],
+      "contentTriggers": ["program.command", "yargs.command"]
+    },
+    {
+      "name": "dev-docs-management",
+      "keywords": ["documentation", "docs", "plan", "context", "task"],
+      "intents": ["create docs", "update plan", "manage context"],
+      "filePathTriggers": ["*.md", "docs/"],
+      "contentTriggers": ["# Plan", "# Context", "# Tasks"]
+    },
+    {
+      "name": "enforce-coding-standards",
+      "keywords": ["standards", "conventions", "style guide", "naming"],
+      "intents": ["enforce standards", "check conventions", "fix naming"],
+      "filePathTriggers": [".eslintrc.js", "tslint.json", "prettier.config.js"],
+      "contentTriggers": ["rules:", "extends:"]
+    },
+    {
+      "name": "generate-documentation",
+      "keywords": ["documentation", "docs", "jsdoc", "typedoc"],
+      "intents": ["generate docs", "document code", "add comments"],
+      "filePathTriggers": ["*.ts", "*.js"],
+      "contentTriggers": ["/**", "* @param", "* @returns"]
+    },
+    {
+      "name": "generate-test-cases",
+      "keywords": ["test", "jest", "mocha", "chai", "cypress", "playwright"],
+      "intents": ["write tests", "create test cases", "test this function"],
+      "filePathTriggers": ["*.test.ts", "*.spec.ts"],
+      "contentTriggers": ["describe(", "it(", "expect("]
+    },
+    {
+      "name": "re-prompting-strategy",
+      "keywords": ["re-prompt", "retry", "different approach", "stuck"],
+      "intents": ["try again", "let's try something else"],
+      "filePathTriggers": [],
+      "contentTriggers": []
+    },
+    {
+      "name": "refactor-code",
+      "keywords": ["refactor", "cleanup", "improve", "restructure"],
+      "intents": ["refactor this", "clean up this code", "improve this function"],
+      "filePathTriggers": ["*.ts", "*.js"],
+      "contentTriggers": ["function", "class", "=>"]
+    },
+    {
+      "name": "security-vulnerability-scan",
+      "keywords": ["security", "vulnerability", "xss", "sql injection", "cve"],
+      "intents": ["scan for vulnerabilities", "check for security holes"],
+      "filePathTriggers": ["package.json", "yarn.lock", "pnpm-lock.yaml"],
+      "contentTriggers": ["dependencies:", "devDependencies:"]
+    },
+    {
+      "name": "skill-auto-activation-system",
+      "keywords": ["skill", "auto-activate", "trigger", "hook"],
+      "intents": ["activate skill", "trigger skill"],
+      "filePathTriggers": ["skill-rules.json"],
+      "contentTriggers": ["keywords:", "intents:"]
+    },
+    {
+      "name": "specialized-agent-creation",
+      "keywords": ["agent", "subagent", "specialized", "role"],
+      "intents": ["create agent", "define role"],
+      "filePathTriggers": ["agents/"],
+      "contentTriggers": ["You are a"]
+    },
+    {
+      "name": "systematic-debugging",
+      "keywords": ["debug", "error", "bug", "issue", "fix"],
+      "intents": ["debug this", "fix this error", "find the bug"],
+      "filePathTriggers": ["*.ts", "*.js"],
+      "contentTriggers": ["console.log", "debugger", "throw new Error"]
+    },
+    {
+      "name": "web-app-testing",
+      "keywords": ["test", "jest", "mocha", "chai", "cypress", "playwright", "e2e", "end-to-end"],
+      "intents": ["test web app", "run e2e tests"],
+      "filePathTriggers": ["cypress/", "playwright/", "*.test.ts", "*.spec.ts"],
+      "contentTriggers": ["cy.visit", "page.goto"]
+    }
+  ]
+}
