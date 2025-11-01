@@ -30,16 +30,14 @@
     "deny": []
   },
   "hooks": {
-    "userPromptSubmit": [
+    "UserPromptSubmit": [
       {
-        "script": ".claude/skill-activator.sh",
-        "rulesFile": ".claude/skill-rules.json"
-      }
-    ],
-    "stopEvent": [
-      {
-        "script": ".claude/post-response-checker.sh",
-        "rulesFile": ".claude/skill-rules.json"
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/prompt-enhancer.sh"
+          }
+        ]
       }
     ]
   }

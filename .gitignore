@@ -2,3 +2,4 @@
 .idea
 .gemini/.env
 .claude/settings.local.json
+cookies.txt

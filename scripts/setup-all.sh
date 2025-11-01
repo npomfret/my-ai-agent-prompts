@@ -144,8 +144,7 @@ echo -e "${GREEN}  ✓ Copied skill-rules.json to .claude/${NC}"
 # Create .claude/.gitignore
 {
     echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
-    echo "skill-rules.json"
-    echo "skill-activator.sh"
+    echo "prompt-enhancer.sh"
     echo "post-response-checker.sh"
     echo "# End of managed section"
 } > .claude/.gitignore
@@ -153,7 +152,7 @@ echo -e "${GREEN}  ✓ Created .claude/.gitignore${NC}"
 
 echo -e "\n${BLUE}8. Setting up hook scripts...${NC}"
 mkdir -p .claude
-create_symlink "$SCRIPT_BASE_DIR/dot_claude/skill-activator.sh" ".claude/skill-activator.sh" "Hook script for skill activation"
+create_symlink "$SCRIPT_BASE_DIR/dot_claude/prompt-enhancer.sh" ".claude/prompt-enhancer.sh" "Hook script for prompt enhancement via Gemini server"
 create_symlink "$SCRIPT_BASE_DIR/dot_claude/post-response-checker.sh" ".claude/post-response-checker.sh" "Hook script for post-response checks"
 
 # Add necessary files to git
@@ -165,8 +164,7 @@ add_files_to_git() {
             "AI_AGENT.md"
             ".mcp.json"
             ".claude/settings.json"
-            ".claude/skill-rules.json"
-            ".claude/skill-activator.sh"
+            ".claude/prompt-enhancer.sh"
             ".claude/post-response-checker.sh"
         )
         
@@ -200,9 +198,10 @@ echo "  - Agent symlinks in: .claude/agents/"
 echo "  - Skill symlinks in: .claude/skills/"
 echo "  - Inventory symlink: .claude/mcp-inventory.json"
 echo "  - Settings merged into: .claude/settings.json"
-echo "  - skill-rules.json copied to: .claude/skill-rules.json"
 echo "  - MCP servers configured in: .mcp.json"
 echo "  - All symlinks and .mcp.local.json added to .gitignore"
 echo "  - Necessary files added to git"
 echo "  - Hook scripts copied to: .claude/"
-echo -e "\n${YELLOW}Remember to use '/p' before every request for intelligent tool selection!${NC}"
+echo -e "\n${YELLOW}IMPORTANT: Start the Gemini prompt enhancer server:${NC}"
+echo -e "${YELLOW}  cd gemini-server && npm run dev${NC}"
+echo -e "\n${BLUE}The prompt-enhancer hook will analyze all prompts using project context!${NC}"
