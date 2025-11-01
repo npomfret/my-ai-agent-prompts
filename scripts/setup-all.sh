@@ -121,9 +121,6 @@ echo -e "\n${BLUE}4. Setting up agent symlinks...${NC}"
 echo -e "\n${BLUE}5. Setting up .claude/settings.json...${NC}"
 merge_settings_json
 
-echo -e "\n${BLUE}6. Setting up MCP servers...${NC}"
-"$SCRIPT_DIR/setup-mcp.sh" "$TARGET_DIR"
-
 # Add necessary files to git
 echo -e "\n${BLUE}7. Adding necessary files to git...${NC}"
 add_files_to_git() {

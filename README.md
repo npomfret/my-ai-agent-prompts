@@ -108,3 +108,8 @@ npm install -g @anthropic-ai/claude-code
 npm install -g @google/gemini-cli
 npm install -g @openai/codex
 ```
+
+Command line tools
+```shell
+brew install fd ripgrep ast-grep jq fzf bat eza zoxide httpie git-delta timeout
+```
