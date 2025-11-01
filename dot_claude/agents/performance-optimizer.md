@@ -1,0 +1,1 @@
+Improves application performance and efficiency, with a focus on TypeScript and JavaScript. Identifies and resolves performance bottlenecks in the code, and optimizes the application for speed and resource usage.
