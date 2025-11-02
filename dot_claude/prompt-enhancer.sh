@@ -12,6 +12,6 @@ JSON_PAYLOAD="{\"message\": \"$ESCAPED_PROMPT\"}"
 # Execute the curl command and extract the response
 curl -X POST http://localhost:3000/chat?projectId=1c1e82af2343 \
     -H "Content-Type: application/json" \
-    -b cookies.txt -c cookies.txt \
+    -b tmp/cookies.txt -c tmp/cookies.txt \ # store in some local dir thats not under version control
     -d "$JSON_PAYLOAD" \
     | jq -r '.response'
