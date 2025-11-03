@@ -16,11 +16,8 @@ PROMPT=$(echo "$JSON_INPUT" | jq -r '.prompt')
 
 # Only invoke http call if prompt starts or ends with underscore
 if [[ "$PROMPT" == _* || "$PROMPT" == *_ ]]; then
-    # Escape double quotes in the prompt for JSON
-    ESCAPED_PROMPT=$(echo "$PROMPT" | sed 's/"/\"/g')
-
-    # Construct the JSON payload
-    JSON_PAYLOAD="{\"message\": \"$ESCAPED_PROMPT\"}"
+    # Use jq to properly construct JSON payload (handles all escaping)
+    JSON_PAYLOAD=$(jq -n --arg msg "$PROMPT" '{message: $msg}')
 
     # Execute the curl command and extract the response
     curl -s -X POST http://localhost:3000/enhance?projectId=9fe1344eb798 \
