@@ -30,15 +30,5 @@
     "deny": []
   },
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/prompt-enhancer.sh"
-          }
-        ]
-      }
-    ]
   }
 }

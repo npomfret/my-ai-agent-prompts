@@ -97,3 +97,26 @@ calculate_relative_path() {
     
     echo "$result"
 }
+
+# Function to create a symlink with proper error handling
+create_symlink() {
+    local source="$1"
+    local target="$2"
+    local description="$3"
+    
+    # Remove existing symlink or file if it exists
+    if [ -L "$target" ]; then
+        rm "$target"
+        echo -e "${YELLOW}  Removed existing symlink: $description${NC}"
+    elif [ -e "$target" ]; then
+        echo -e "${RED}  Warning: $target exists and is not a symlink. Skipping.${NC}"
+        return 1
+    fi
+    
+    # Create parent directory if needed
+    mkdir -p "$(dirname "$target")"
+    
+    # Create the symlink
+    ln -sf "$source" "$target"
+    echo -e "${GREEN}  ✓ Created symlink: $description${NC}"
+}

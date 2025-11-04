@@ -112,48 +112,18 @@ mkdir -p .claude/skills
 # Run the individual setup scripts
 echo -e "\n${BLUE}3. Setting up command files...${NC}"
 "$SCRIPT_DIR/setup-commands.sh" "$TARGET_DIR"
-{
-    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
-    ls -1 .claude/commands
-    echo "# End of managed section"
-} > .claude/commands/.gitignore
+
 
 echo -e "\n${BLUE}4. Setting up agent files...${NC}"
 "$SCRIPT_DIR/setup-agents.sh" "$TARGET_DIR"
-{
-    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
-    ls -1 .claude/agents
-    echo "# End of managed section"
-} > .claude/agents/.gitignore
+
 
 echo -e "\n${BLUE}5. Setting up skill files...${NC}"
 "$SCRIPT_DIR/setup-skills.sh" "$TARGET_DIR"
-{
-    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
-    ls -1 .claude/skills
-    echo "# End of managed section"
-} > .claude/skills/.gitignore
+
 
 echo -e "\n${BLUE}6. Setting up .claude/settings.json...${NC}"
 merge_settings_json
-
-echo -e "\n${BLUE}7. Copying skill-rules.json...${NC}"
-cp "$SCRIPT_BASE_DIR/skill-rules.json" ".claude/skill-rules.json"
-echo -e "${GREEN}  ✓ Copied skill-rules.json to .claude/${NC}"
-
-# Create .claude/.gitignore
-{
-    echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
-    echo "prompt-enhancer.sh"
-    echo "post-response-checker.sh"
-    echo "# End of managed section"
-} > .claude/.gitignore
-echo -e "${GREEN}  ✓ Created .claude/.gitignore${NC}"
-
-echo -e "\n${BLUE}8. Setting up hook scripts...${NC}"
-mkdir -p .claude
-create_symlink "$SCRIPT_BASE_DIR/dot_claude/prompt-enhancer.sh" ".claude/prompt-enhancer.sh" "Hook script for prompt enhancement via Gemini server"
-create_symlink "$SCRIPT_BASE_DIR/dot_claude/post-response-checker.sh" ".claude/post-response-checker.sh" "Hook script for post-response checks"
 
 # Add necessary files to git
 echo -e "\n${BLUE}9. Adding necessary files to git...${NC}"
@@ -164,8 +134,6 @@ add_files_to_git() {
             "AI_AGENT.md"
             ".mcp.json"
             ".claude/settings.json"
-            ".claude/prompt-enhancer.sh"
-            ".claude/post-response-checker.sh"
         )
         
         local added_files=()
