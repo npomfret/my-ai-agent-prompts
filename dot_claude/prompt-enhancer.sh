@@ -23,7 +23,7 @@ if [[ "$PROMPT" == _* || "$PROMPT" == *_ ]]; then
     JSON_PAYLOAD=$(jq -n --arg msg "$PROMPT" '{message: $msg}')
 
     # Execute the curl command and get the enhancement
-    ENHANCEMENT=$(curl -s -X POST http://localhost:3000/enhance?projectId=9fe1344eb798 \
+    ENHANCEMENT=$(curl -s -X POST http://localhost:3000/enhance?projectId=cec04d6b28ab \
         -H "Content-Type: application/json" \
         -b "$COOKIE_FILE" -c "$COOKIE_FILE" \
         -d "$JSON_PAYLOAD" \

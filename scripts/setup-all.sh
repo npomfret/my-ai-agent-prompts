@@ -11,7 +11,7 @@ source "$SCRIPT_DIR/common.sh"
 TARGET_DIR="${1:-$(pwd)}"
 TARGET_DIR="$(cd "$TARGET_DIR" && pwd)"
 
-echo -e "${BLUE}Setting up AI agent symlinks in: ${TARGET_DIR}${NC}"
+echo -e "${BLUE}Setting up AI agent files in: ${TARGET_DIR}${NC}"
 
 # Change to target directory
 cd "$TARGET_DIR"
@@ -110,7 +110,7 @@ mkdir -p .claude/agents
 mkdir -p .claude/skills
 
 # Run the individual setup scripts
-echo -e "\n${BLUE}3. Setting up command symlinks...${NC}"
+echo -e "\n${BLUE}3. Setting up command files...${NC}"
 "$SCRIPT_DIR/setup-commands.sh" "$TARGET_DIR"
 {
     echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
@@ -118,7 +118,7 @@ echo -e "\n${BLUE}3. Setting up command symlinks...${NC}"
     echo "# End of managed section"
 } > .claude/commands/.gitignore
 
-echo -e "\n${BLUE}4. Setting up agent symlinks...${NC}"
+echo -e "\n${BLUE}4. Setting up agent files...${NC}"
 "$SCRIPT_DIR/setup-agents.sh" "$TARGET_DIR"
 {
     echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
@@ -126,7 +126,7 @@ echo -e "\n${BLUE}4. Setting up agent symlinks...${NC}"
     echo "# End of managed section"
 } > .claude/agents/.gitignore
 
-echo -e "\n${BLUE}5. Setting up skill symlinks...${NC}"
+echo -e "\n${BLUE}5. Setting up skill files...${NC}"
 "$SCRIPT_DIR/setup-skills.sh" "$TARGET_DIR"
 {
     echo "# Managed by my-ai-agent-prompts/scripts/setup-all.sh - DO NOT EDIT"
@@ -193,9 +193,9 @@ add_files_to_git
 echo -e "\n${GREEN}✅ Setup complete!${NC}"
 echo -e "\n${BLUE}Summary:${NC}"
 echo "  - AI_AGENT.md is the source file for both CLAUDE.md and GEMINI.md"
-echo "  - Command symlinks in: .claude/commands/"
-echo "  - Agent symlinks in: .claude/agents/"
-echo "  - Skill symlinks in: .claude/skills/"
+echo "  - Command files in: .claude/commands/"
+echo "  - Agent files in: .claude/agents/"
+echo "  - Skill files in: .claude/skills/"
 echo "  - Inventory symlink: .claude/mcp-inventory.json"
 echo "  - Settings merged into: .claude/settings.json"
 echo "  - MCP servers configured in: .mcp.json"
