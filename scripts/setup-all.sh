@@ -101,6 +101,7 @@ fi
 # Create symlinks to CLAUDE.md and GEMINI.md
 create_symlink "AI_AGENT.md" "CLAUDE.md" "CLAUDE.md -> AI_AGENT.md"
 create_symlink "AI_AGENT.md" "GEMINI.md" "GEMINI.md -> AI_AGENT.md"
+create_symlink "AI_AGENT.md" "GEMINI.md" "GEMINI.md -> AGENTS.md"
 
 echo -e "\n${BLUE}2. Setting up .claude directory structure...${NC}"
 
