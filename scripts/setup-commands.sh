@@ -24,6 +24,7 @@ echo -e "\n${BLUE}Syncing command files...${NC}"
 # Clean up old copies first
 cleanup_old_copies "$SCRIPT_BASE_DIR/dot_claude/commands" ".claude/commands"
 
+shopt -s nullglob
 # Get all command files from source
 for cmd_file in "$SCRIPT_BASE_DIR/dot_claude/commands"/*.md; do
     if [ -f "$cmd_file" ]; then
@@ -31,6 +32,7 @@ for cmd_file in "$SCRIPT_BASE_DIR/dot_claude/commands"/*.md; do
         copy_and_comment "$cmd_file" ".claude/commands/$filename" "commands/$filename"
     fi
 done
+shopt -u nullglob
 
 # List what was set up
 echo -e "\n${BLUE}Copied commands:${NC}"

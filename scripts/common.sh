@@ -37,8 +37,14 @@ copy_and_comment() {
     # Create parent directory if needed
     mkdir -p "$(dirname "$target")"
 
-    # Copy the file and prepend the comment
-    (echo -e "$comment" && cat "$source") > "$target"
+    local temp_file
+    temp_file=$(mktemp)
+
+    # Write the new content to a temporary file
+    (echo -e "$comment" && cat "$source") > "$temp_file"
+
+    # Move the temp file to the target
+    mv "$temp_file" "$target"
 
     echo -e "${GREEN}  ✓ Copied and commented: $description${NC}"
 }
@@ -53,6 +59,7 @@ cleanup_old_copies() {
         return
     fi
 
+    shopt -s nullglob
     for target_file in "$target_dir"/*"$extension"; do
         if [ -f "$target_file" ]; then
             local filename=$(basename "$target_file")
@@ -63,6 +70,7 @@ cleanup_old_copies() {
             fi
         fi
     done
+    shopt -u nullglob
 }
 
 

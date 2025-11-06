@@ -24,6 +24,7 @@ echo -e "\n${BLUE}Syncing agent files...${NC}"
 # Clean up old copies first
 cleanup_old_copies "$SCRIPT_BASE_DIR/dot_claude/agents" ".claude/agents"
 
+shopt -s nullglob
 # Get all agent files from source
 for agent_file in "$SCRIPT_BASE_DIR/dot_claude/agents"/*.md; do
     if [ -f "$agent_file" ]; then
@@ -31,6 +32,7 @@ for agent_file in "$SCRIPT_BASE_DIR/dot_claude/agents"/*.md; do
         copy_and_comment "$agent_file" ".claude/agents/$filename" "agents/$filename"
     fi
 done
+shopt -u nullglob
 
 # List what was set up
 echo -e "\n${BLUE}Copied agents:${NC}"

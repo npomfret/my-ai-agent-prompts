@@ -24,6 +24,7 @@ if [ ! -d "$SOURCE_SKILLS_DIR" ]; then
     exit 0
 fi
 
+shopt -s nullglob
 # Cleanup old skills
 for target_skill_dir in "$TARGET_SKILLS_DIR"/*; do
     if [ -d "$target_skill_dir" ]; then
@@ -67,5 +68,6 @@ for skill_source_dir in "$SOURCE_SKILLS_DIR"/*; do
         fi
     fi
 done
+shopt -u nullglob
 
 echo -e "${GREEN}  ✓ Skills setup complete${NC}"
