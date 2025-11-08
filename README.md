@@ -109,7 +109,7 @@ npm install -g @openai/codex
 
 Command line tools
 ```shell
-brew install fd ripgrep ast-grep jq fzf bat eza zoxide httpie git-delta timeout
+brew install timout fd ripgrep ast-grep jq fzf bat eza zoxide httpie git-delta timeout
 ```
 
 ## API Usage Stats
